@@ -1,0 +1,8 @@
+1. Allowed extensions: '.jpg.', '.jpeg', '.JPG', '.JPEG'
+2. Image file size does not exceed 250 kB
+3. Image can be read with PIL
+4. Shape
+	a. (H,W,3) - size of height>=100 and width>=100. Channels should be in order RGB (red, green, blue)
+	c. (H,W) - grayscale image
+5. Image data has variance > 0 --> there is not just one common pixel in data
+6. Image is not duplicated

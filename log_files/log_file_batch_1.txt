@@ -1,0 +1,7 @@
+1.png,1
+2.JPG,2
+3.jpg,3
+4.JPG,4
+5.jpg,5
+6_2-invalid.JPG,6
+test.txt,1

@@ -1,0 +1,8 @@
+size 2.jpeg,2
+size.jpg,2
+dog.jpg,6
+size.jpg,2
+dog.jpg,6
+size.jpg,2
+sunrise png.png,1
+sunset png.png,1
