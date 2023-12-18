@@ -21,6 +21,11 @@ def change_pixels(i,j,f_pixelated_image,f_known_array,size_i,size_j):
         f_known_array[i:i + size_i, j:j + size_j] = False
     return f_pixelated_image,f_known_array
 
+"""
+pixelated_image -> returns (1,H,W)
+known_array -> returns (1,H,W)
+target_array -> returns (1,height,width)
+"""
 def prepare_image(image: np.ndarray,
                   x: int,
                   y: int,

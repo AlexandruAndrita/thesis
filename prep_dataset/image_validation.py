@@ -127,18 +127,3 @@ def create_file_name(batch_name):
     log_file_name = "log_file_batch_" + str(batch_name) + ".txt"
     return  folder_file_name,log_file_name
 
-if __name__ == '__main__':
-    TEST_SIZE = 2
-
-    for i in range(1,TEST_SIZE+1):
-        input_dir_name, _ = create_file_name(i)
-        output_dir_name, _ = create_file_name(i)
-        _, log_file_name = create_file_name(i)
-
-        input_dir = f"D:\\an III\\bachelor's thesis\\thesis\\input_test_images_validation\\{input_dir_name}"
-        output_dir = f"D:\\an III\\bachelor's thesis\\thesis\\output_test_images_validation\\{output_dir_name}"
-        log_file = f"D:\\an III\\bachelor's thesis\\thesis\\log_files\\{log_file_name}"
-        validate_images(input_dir=input_dir,output_dir=output_dir,log_file=log_file)
-
-        print(f"Test set with index {i} evaluated")
-

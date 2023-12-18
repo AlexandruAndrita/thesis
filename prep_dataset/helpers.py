@@ -16,6 +16,6 @@ def normalize_output(y):
     # normalizing with values between 0 and 1 [0,1]
     y=(y-np.min(y))/(np.max(y)-np.min(y))
     # scaling values between 0 and 255 [0,255]
-    y=np.round(y*255)
-    y=y.astype(dtype=np.uint8)
+    # y=np.round(y*255)
+    # y=y.astype(dtype=np.uint8)
     return y
