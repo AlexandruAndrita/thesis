@@ -22,9 +22,9 @@ if __name__ == '__main__':
     #
     #     print(f"Test set with index {i} evaluated")
 
-    input_dir = f"D:\\an III\\bachelor's thesis\\thesis\\input_test_images_validation\\test_batch_3"
-    output_dir = f"D:\\an III\\bachelor's thesis\\thesis\\output_test_images_validation\\test_batch_3"
-    log_file = f"D:\\an III\\bachelor's thesis\\thesis\\log_files\\log_file_batch_3.txt"
+    input_dir = "D:\\an III\\bachelor's thesis\\thesis\\input_test_images_validation\\test_batch_3"
+    output_dir = "D:\\an III\\bachelor's thesis\\thesis\\output_test_images_validation\\test_batch_3"
+    log_file = "D:\\an III\\bachelor's thesis\\thesis\\log_files\\log_file_batch_3.txt"
     image_validation.validate_images(input_dir=input_dir, output_dir=output_dir, log_file=log_file)
 
     images = os.listdir(output_dir)
