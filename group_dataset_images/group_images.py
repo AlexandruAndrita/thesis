@@ -30,6 +30,8 @@ class RandomImagePixelationDataset(torch.utils.data.Dataset):
         self.filenames=self.get_files()
         self.dtype=dtype
 
+        self.max_height,self.max_width = self.get_max_height_width()
+
     def get_files(self):
         self.image_dir = os.path.abspath(self.image_dir)
         files = glob.glob(os.path.join(self.image_dir, "**", "*"), recursive=True)
@@ -42,6 +44,23 @@ class RandomImagePixelationDataset(torch.utils.data.Dataset):
         filenames.sort()
 
         return filenames
+
+    def get_max_height_width(self):
+        max_height = float("-inf")
+        max_width = float("-inf")
+
+        for image in self.filenames:
+            img = Image.open(image)
+            img_array = np.array(img)
+            height, width,_ = img_array.shape
+
+            max_height = max(max_height,height)
+            max_width = max(max_width,width)
+
+        return max_height,max_width
+
+    # def get_height_width(self):
+    #     return self.max_height,self.max_width
 
     @staticmethod
     def validate_input_directory(directory):
@@ -72,6 +91,7 @@ class RandomImagePixelationDataset(torch.utils.data.Dataset):
         grayscale_image=to_grayscale.to_grayscale(image_array)
 
         rng=np.random.default_rng(seed=index)
+        # [0] in order to extract the value from the array
         width=rng.integers(low=self.width_range[0],high=self.width_range[1]+1,size=1)[0]
         height=rng.integers(low=self.height_range[0],high=self.height_range[1]+1,size=1)[0]
 
@@ -80,6 +100,9 @@ class RandomImagePixelationDataset(torch.utils.data.Dataset):
             width=grayscale_image.shape[2]
         if height>grayscale_image.shape[1]:
             height=grayscale_image.shape[1]
+
+        width = min(width,self.max_width)
+        height = min(height,self.max_height)
 
         x=rng.integers(low=0,high=grayscale_image.shape[2]-width+1,size=1)[0]
         y=rng.integers(low=0,high=grayscale_image.shape[1]-height+1,size=1)[0]
