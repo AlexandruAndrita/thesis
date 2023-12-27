@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-from torch.utils.data import DataLoader
 
 def get_max_height_width(batch_as_list: list):
     max_width=float("-inf")
