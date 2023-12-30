@@ -1,5 +1,6 @@
 import os
 import torch
+from torch.utils.data import Dataset
 import glob
 from PIL import Image
 import numpy as np
@@ -8,7 +9,7 @@ from typing import Optional
 from prep_dataset import to_grayscale
 from prep_dataset import prepare_image
 
-class RandomImagePixelationDataset(torch.utils.data.Dataset):
+class RandomImagePixelationDataset(Dataset):
 
     def __init__(
             self,

@@ -26,7 +26,7 @@ def apply_padding(array,max_height,max_width,c_value):
 
     return array
 
-def stack_with_padding(batch_as_list: list,max_height: int,max_width: int):
+def stack_with_padding(batch_as_list: list, max_height: int, max_width: int):
     # (pixelated_image, known_array, target_array, image_file)
 
     for i,image in enumerate(batch_as_list):
