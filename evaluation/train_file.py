@@ -18,17 +18,19 @@ def train(cnn_model, train_dataset, optimizer, criterion, device):
         optimizer.zero_grad() # reset accumulated gradients
         output = cnn_model(pixelated_image)
 
-        know_array = know_array.to(dtype=torch.int32)
+        know_array = know_array.to(dtype=torch.bool)
 
-        output_masked = output[know_array.expand_as(output)].view(-1)
-        target_masked = target_array[know_array.expand_as(target_array)].view(-1)
+        #output_masked = torch.masked_select(output,know_array)
+        #target_masked = target_array_normalized[:,:,know_array]
 
         print(f"Input shape: {pixelated_image.shape}")
         print(f"Boolean mask: {know_array.shape}")
         print(f"Target shape: {target_array_normalized.shape}")
         print(f"Output shape: {output.shape}")
 
-        loss = criterion(output_masked, target_masked)
+        # output is not in right shape --> should be modified in validation and test too
+        # loss = criterion(output,target_array_normalized)
+        loss = criterion(output, target_array_normalized)
 
         loss.backward() # compute gradients
         optimizer.step() # weight update
