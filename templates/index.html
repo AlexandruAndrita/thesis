@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home page</title>
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=3d&display=swap">
+</head>
+<body>
+
+    <h1 class="font-effect-3d">Image Depixelation</h1>
+
+    <div class="row">
+        <div class="column">
+            <div class="card">
+                <p class="informativeText">Input</p>
+                <canvas id="imageUploadedDisplayed"></canvas>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card">
+                <p class="informativeText">Output</p>
+                <canvas id="imageResult"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" multiple="false" accept="image/*" id=imageUploaded onchange="uploadImage()">
+
+    <div class="button-container">
+        <button class="button" onclick="saveImage()">Save</button>
+        <button class="button" onclick="cancelAction()">Cancel</button>
+    </div>
+
+    <script src="/static/js/index.js"></script>
+    <script src="https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
+</body>
+</html>
