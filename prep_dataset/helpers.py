@@ -19,3 +19,13 @@ def normalize_output(y):
     # y=np.round(y*255)
     # y=y.astype(dtype=np.uint8)
     return y
+
+def normalize_targets(tensor_target):
+    shape = tensor_target.shape
+    tensor_target_reshaped=tensor_target.view(1,-1)
+    mini = tensor_target_reshaped.min()
+    maxi = tensor_target_reshaped.max()
+    tensor_target_reshaped = (tensor_target-mini)/(maxi-mini)
+    tensor_target_normalized = tensor_target_reshaped.view(shape)
+
+    return tensor_target_normalized

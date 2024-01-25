@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-from torch.utils.data import DataLoader
 
 def get_max_height_width(batch_as_list: list):
     max_width=float("-inf")
@@ -27,10 +26,8 @@ def apply_padding(array,max_height,max_width,c_value):
 
     return array
 
-def stack_with_padding(batch_as_list: list):
+def stack_with_padding(batch_as_list: list, max_height: int, max_width: int):
     # (pixelated_image, known_array, target_array, image_file)
-
-    max_height,max_width=get_max_height_width(batch_as_list)
 
     for i,image in enumerate(batch_as_list):
         pixelated_image,known_array,target_array,image_file=image
@@ -52,16 +49,18 @@ def stack_with_padding(batch_as_list: list):
 
         batch_as_list[i]=(pixelated_image,known_array,target_array,image_file)
 
-
     stacked_pixelated_images=np.stack([image[0] for image in batch_as_list],axis=0)
     stacked_pixelated_images=torch.tensor(stacked_pixelated_images)
 
     stacked_known_arrays=np.stack([image[1] for image in batch_as_list],axis=0)
     stacked_known_arrays=torch.tensor(stacked_known_arrays)
 
+    #stacked_target_arrays = np.stack([image for image in stacked_target_list],axis=0)
+    #stacked_target_arrays=torch.tensor(stacked_target_arrays)
     target_arrays=[torch.tensor(image[2]) for image in batch_as_list]
 
     image_files=[image[3] for image in batch_as_list]
 
     return stacked_pixelated_images,stacked_known_arrays,target_arrays,image_files
+    #return stacked_pixelated_images,stacked_known_arrays,stacked_target_arrays,image_files
 

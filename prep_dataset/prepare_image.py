@@ -1,4 +1,5 @@
 import numpy as np
+from torchvision import transforms
 
 def data_validation(image: np.ndarray,x:int,y:int,width:int,height:int,size:int):
     if len(image.shape)!=3:
