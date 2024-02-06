@@ -25,11 +25,12 @@
         </div>
     </div>
 
-    <input type="file" multiple="false" accept="image/*" id=imageUploaded onchange="uploadImage()">
+    <!-- multiple="false" accept="image/jpg image/jpeg" -->
+    <input type="file" id=imageUploaded onchange="uploadImage()" multiple>
 
     <div class="button-container">
         <button class="button" onclick="saveImage()">Save</button>
-        <button class="button" onclick="cancelAction()">Cancel</button>
+        <button class="button" onclick="cancelAction()">Discard</button>
     </div>
 
     <script src="/static/js/index.js"></script>

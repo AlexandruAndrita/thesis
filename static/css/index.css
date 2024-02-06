@@ -65,7 +65,7 @@ input[type="file"] {
 
 .button {
     background-color: #3A6B35;
-    color: black;
+    color: white;
     font-size: 1em;
     padding: 10px;
     margin: 5px;
@@ -85,4 +85,64 @@ input[type="file"] {
     .column {
         max-width: 50%;
     }
+}
+
+#dialogoverlay{
+  display: none;
+  opacity: .8;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background: #707070;
+  width: 100%;
+  z-index: 10;
+}
+
+#dialogbox{
+  display: none;
+  position: absolute;
+  background: rgb(0, 47, 43);
+  border-radius:7px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.575);
+  transition: 0.3s;
+  width: 40%;
+  z-index: 10;
+  top:0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+#dialogbox:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.911);
+}
+
+.container {
+  padding: 2px 16px;
+}
+
+#dialogbox > div{
+  background:#FFF;
+  margin:8px;
+}
+
+#dialogbox > div >{
+  background: rgb(0, 77, 70);
+  font-size:19px;
+  padding:10px;
+  color:rgb(255, 255, 255);
+  font-family: sans-serif ;
+}
+
+#dialogbox > div > #dialogboxbody{
+  background:rgb(0, 47, 43);
+  padding:20px;
+  color:#FFF;
+  font-family: sans-serif ;
+}
+
+#dialogbox > div > #dialogboxfoot{
+  background: rgb(0, 47, 43);
+  padding:10px;
+  text-align:right;
 }
