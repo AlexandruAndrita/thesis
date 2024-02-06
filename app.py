@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-
+import torch
+from evaluation.model_file import CNNModel
 
 app = Flask(__name__)
 
@@ -7,10 +8,16 @@ def predict(image):
     """
     i. preprocessing of the image values before calling the ML model
     ii. load the trained model
-    iii. fed the image in the trained model
-    iv. convert the image back to human-readable format with PIL
-    v. return the image after
+    iii. preprocess image
+    iv. fed the processed image in the trained model
+    v. convert the image back to human-readable format with PIL
+    vi. return the image after
     """
+    model = CNNModel()
+    model.load_state_dict(torch.load("CNNModel.pth"))
+    model.eval()
+    # write job in order to feed the image back to the model
+
     return image
 
 @app.route("/", methods=["POST","GET"])
