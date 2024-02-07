@@ -21,7 +21,7 @@ def predict(image):
     # feed the image to the model and get the result image
     return image
 
-@app.route("/", methods=["POST","GET"])
+@app.route("/process_image", methods=["POST","GET"])
 def index():
     if request.method == "POST":
         # Get the uploaded image from the request
