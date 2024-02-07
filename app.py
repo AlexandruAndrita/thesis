@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, send_file
 import torch
 from evaluation.model_file import CNNModel
@@ -8,46 +9,42 @@ import numpy as np
 app = Flask(__name__)
 
 def preprocess_image(image):
-    # image=image.convert("L")
-    # image=image.resize((28,28))
-    # image=np.array(image)/255.0
-    # image=torch.tensor(image,dtype=torch.float32)
+    image=image.convert("L")
     return image
 
 def predict(image):
-    model = CNNModel()
-    model.load_state_dict(torch.load("CNNModel.pth"))
-    model.eval()
-    # feed the image to the model and get the result image
+    # load image, feed the image to the model, get the result image
+
+    #model = CNNModel()
+    #model.load_state_dict(torch.load("CNNModel.pth"))
+    #model.eval()
+
     return image
 
-@app.route("/process_image", methods=["POST","GET"])
+@app.route("/", methods=["POST","GET"])
 def index():
     if request.method == "POST":
-        # Get the uploaded image from the request
-        uploaded_image = request.files["imageUploadedDisplayed"]
+        try:
+            uploaded_image = request.files["imageUploadedDisplayed"]
 
-        # Read the image using PIL
-        image = Image.open(uploaded_image)
+            image = Image.open(uploaded_image)
+            image_format = image.format
+            preprocessed_image = preprocess_image(image)
+            result_image = predict(preprocessed_image)
+            result_image_stream = io.BytesIO()
+            result_image.save(result_image_stream,format=image_format)
+            result_image_stream.seek(0)
 
-        # Preprocess the image
-        preprocessed_image = preprocess_image(image)
+            mimetype_value = "image/"+image_format.lower()
 
-        # Apply the CNN model
-        result_image = predict(preprocessed_image)
+        except Exception as e:
+            print(f"Exception caught: {e}")
 
-        # Convert the result image back to PIL format
-        result_image_pil = Image.fromarray(result_image)
+        return send_file(result_image_stream,mimetype=mimetype_value)
 
-        # Save the result image to a byte stream
-        result_image_stream = io.BytesIO()
-        result_image_pil.save(result_image_stream)
-        result_image_stream.seek(0)
-
-        # Return the result image as a response
-        return send_file(result_image_stream)
-
-    return render_template('index.html')
+    elif request.method == "GET":
+        pass
+    return render_template("index.html")
 
 
 if __name__ == "__main__":

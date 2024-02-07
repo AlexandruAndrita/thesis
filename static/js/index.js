@@ -46,7 +46,7 @@ function saveImage(){
 }
 
 function uploadImage(){
-    var imageResult = document.getElementById("imageResult");
+    //var imageResult = document.getElementById("imageResult");
     var imageUploadedDisplayed = document.getElementById("imageUploadedDisplayed");
     var imageUploaded = document.getElementById("imageUploaded")
 
@@ -70,8 +70,8 @@ function uploadImage(){
         else {
             var imgTmp = new SimpleImage(imageUploaded);
 
-            imgTmp.drawTo(imageResult);
             imgTmp.drawTo(imageUploadedDisplayed)
+            //imgTmp.drawTo(imageResult);
         }
     }
 }
@@ -107,3 +107,41 @@ function AlertHelper(){
 }
 
 let alertHelper = new AlertHelper();
+
+document.querySelector('form').addEventListener('submit', function(event)
+{
+    event.preventDefault();
+
+    var imageResult = document.getElementById("imageResult");
+    var imageUploadedDisplayed = document.getElementById("imageUploadedDisplayed");
+    var formImage = document.getElementById("imageUploaded").files[0];
+    var formData = new FormData();
+    formData.append("imageUploadedDisplayed",formImage);
+    var xhr = new XMLHttpRequest();
+
+    xhr.open('POST', '/', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var blob=new Blob([xhr.response],{type: 'image/jpeg'});
+            var imageUrl=URL.createObjectURL(blob)
+            var tmp=new Image();
+
+            tmp.onload = () => {
+                imageResult.width = tmp.width;
+                imageResult.height = tmp.height;
+                imageResult.getContext('2d').drawImage(tmp,0,0);
+                URL.revokeObjectURL(imageUrl);
+            };
+            tmp.src = imageUrl;
+
+            console.log('Request successful');
+            console.log(imageUrl)
+            console.log(imageResult.width)
+            console.log(imageResult.height)
+        } else {
+            console.log('Request failed');
+        }
+    };
+
+    xhr.send(formData);
+});
