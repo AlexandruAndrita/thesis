@@ -24,6 +24,8 @@ def predict(image):
 @app.route("/", methods=["POST","GET"])
 def index():
     if request.method == "POST":
+        result_image_stream=""
+
         try:
             uploaded_image = request.files["imageUploadedDisplayed"]
 
@@ -35,6 +37,7 @@ def index():
             result_image.save(result_image_stream,format=image_format)
             result_image_stream.seek(0)
 
+            mimetype_value = ""
             mimetype_value = "image/"+image_format.lower()
 
         except Exception as e:
