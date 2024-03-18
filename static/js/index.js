@@ -68,10 +68,31 @@ function uploadImage(){
             alertHelper.alert("File extension '." + extension + "' is not supported. " +
                 "Supported types are: \'.jpg\', \'.jpeg\', \'.JPG\', \'.JPEG\'. ");
         else {
-            var imgTmp = new SimpleImage(imageUploaded);
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                var imgTmp = new Image();
+                imgTmp.onload = function() {
+                    imageUploadedDisplayed.getContext('2d').drawImage(imgTmp, 0, 0);
 
-            imgTmp.drawTo(imageResult);
-            imgTmp.drawTo(imageUploadedDisplayed)
+                    setTimeout(function() {
+                        var ctxResult = imageResult.getContext('2d');
+                        ctxResult.clearRect(0, 0, imageResult.width, imageResult.height);
+                        ctxResult.drawImage(imgTmp, 0, 0); // Draw the original image first
+                        var imageData = ctxResult.getImageData(0, 0, imageResult.width, imageResult.height);
+                        var data = imageData.data;
+                        for (var i = 0; i < data.length; i += 4) {
+                            var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                            // RBG
+                            data[i] = avg;
+                            data[i + 1] = avg;
+                            data[i + 2] = avg;
+                        }
+                        ctxResult.putImageData(imageData, 0, 0);
+                    }, 3000);
+                };
+                imgTmp.src = event.target.result;
+            };
+            reader.readAsDataURL(targetImage);
         }
     }
 }
@@ -107,3 +128,41 @@ function AlertHelper(){
 }
 
 let alertHelper = new AlertHelper();
+
+document.querySelector('form').addEventListener('submit', function(event)
+{
+    event.preventDefault();
+
+    var imageResult = document.getElementById("imageResult");
+    var imageUploadedDisplayed = document.getElementById("imageUploadedDisplayed");
+    var formImage = document.getElementById("imageUploaded").files[0];
+    var formData = new FormData();
+    formData.append("imageUploadedDisplayed",formImage);
+    var xhr = new XMLHttpRequest();
+
+    xhr.open('POST', '/', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var blob=new Blob([xhr.response],{type: 'image/jpeg'});
+            var imageUrl=URL.createObjectURL(blob)
+            var tmp=new Image();
+
+            tmp.onload = function() {
+                imageResult.width = tmp.width;
+                imageResult.height = tmp.height;
+                imageResult.getContext('2d').drawImage(tmp,0,0);
+                URL.revokeObjectURL(imageUrl);
+            };
+            tmp.src = imageUrl;
+
+            console.log('Request successful');
+            console.log(imageUrl)
+            console.log(imageResult.width)
+            console.log(imageResult.height)
+        } else {
+            console.log('Request failed');
+        }
+    };
+
+    xhr.send(formData);
+});

@@ -28,4 +28,5 @@ if __name__ == '__main__':
     loss_test = test(cnn_model, test_dataset, criterion, device)
     print(f"Test Loss: {loss_test}")
 
-
+    torch.save(cnn_model.state_dict(),"CNNModel.pth")
+    print("Model saved successfully under the name: CNNModel.pth")

@@ -25,13 +25,15 @@
         </div>
     </div>
 
-    <!-- multiple="false" accept="image/jpg image/jpeg" -->
-    <input type="file" id=imageUploaded onchange="uploadImage()" multiple>
+    <input type="file" id="imageUploaded" onchange="uploadImage()" multiple>
 
-    <div class="button-container">
-        <button class="button" onclick="saveImage()">Save</button>
-        <button class="button" onclick="cancelAction()">Discard</button>
-    </div>
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <div class="button-container">
+            <button class="button" type="submit" onclick="alert('Image is being processed')">Process Image</button>
+            <button class="button" onclick="saveImage()">Save</button>
+            <button class="button" onclick="cancelAction()">Discard</button>
+        </div>
+    </form>
 
     <script src="/static/js/index.js"></script>
     <script src="https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
