@@ -43,6 +43,8 @@ def train(cnn_model, train_dataset, optimizer, criterion, device):
             optimizer.step()  # weight update
             total_loss += loss.item()
 
+    print(f"Total loss train: {total_loss}")
+    print(f"Total loss train divided by length: {total_loss / len(train_dataset)}")
     return total_loss / len(train_dataset)
 
 def replace_pixelated_area(pixelated_image,known_array,target_array):

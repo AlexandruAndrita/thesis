@@ -39,5 +39,6 @@ def validation(cnn_model, validation_dataset, criterion, device):
                 if i==len(batch[3])-1:
                     break
 
-
+    print(f"Total loss train: {total_loss}")
+    print(f"Total loss train divided by length: {total_loss / len(validation_dataset)}")
     return total_loss / len(validation_dataset)
