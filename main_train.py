@@ -21,6 +21,7 @@ if __name__ == '__main__':
     num_epochs = 5
     for epoch in range(num_epochs):
         loss_train = train(cnn_model, train_dataset, optimizer, criterion, device)
+        print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {loss_train}")
         loss_validation = validation(cnn_model, validation_dataset, criterion, device)
 
         print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {loss_train} - Validation Loss: {loss_validation}")
