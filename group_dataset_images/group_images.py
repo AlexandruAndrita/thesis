@@ -39,9 +39,12 @@ class RandomImagePixelationDataset(Dataset):
         filenames = list()
         for f in files:
             if os.path.isfile(f):
-                name, extension = os.path.splitext(f)
-                if extension in [".jpg", ".jpeg", ".JPG", ".JPEG"]:
-                    filenames.append(f)
+                img = Image.open(f)
+                width, height = img.size
+                if height == 128 and width == 170:
+                    name, extension = os.path.splitext(f)
+                    if extension in [".jpg", ".jpeg", ".JPG", ".JPEG"]:
+                        filenames.append(f)
         filenames.sort()
 
         return filenames

@@ -8,42 +8,44 @@ def train(cnn_model, train_dataset, optimizer, criterion, device):
     total_loss = 0
     for batch in train_dataset:
         """
-        input, _, target, _
+        for i in batch:
+            input, mask, target, path
+            input = batch[0][i]
+            mask = batch[1][i]
+            target = batch[2][i]
+            path = batch[3][i]
         """
-        pixelated_image,know_array,target_array,path = batch
-        pixelated_image=pixelated_image.to(device)
-        target_array=target_array[0].to(device)
-        target_array_normalized = normalize_targets(target_array)
+        for i,_ in enumerate(batch):
+            pixelated_image = batch[0][i]
+            known_array = batch[1][i]
+            target_array = batch[2][i]
+            _ = batch[3][i]
 
-        optimizer.zero_grad() # reset accumulated gradients
-        output = cnn_model(pixelated_image)
+            pixelated_image = pixelated_image.to(device)
+            target_array=target_array.to(device)
 
-        know_array = know_array.to(dtype=torch.bool)
+            target_array_normalized = normalize_targets(target_array)
+            optimizer.zero_grad() # resetting accumulated gradients
+            output = cnn_model(pixelated_image)
 
-        #output_masked = torch.masked_select(output,know_array)
-        #target_masked = target_array_normalized[:,:,know_array]
+            # print(f"Input shape: {pixelated_image.shape}")
+            # print(f"Boolean mask: {known_array.shape}")
+            # print(f"Target shape: {target_array_normalized.shape}")
+            # print(f"Output shape: {output.shape}")
 
-        print(f"Input shape: {pixelated_image.shape}")
-        print(f"Boolean mask: {know_array.shape}")
-        print(f"Target shape: {target_array_normalized.shape}")
-        print(f"Output shape: {output.shape}")
+            known_array = known_array.to(dtype=torch.bool)
+            crop = output[~known_array]
+            crop_reshaped = crop.reshape(target_array_normalized.shape)
 
-        # crop = output[~know_array]
+            loss = criterion(crop_reshaped, target_array_normalized)
 
-        test_pix_image = replace_pixelated_area(pixelated_image, know_array, target_array_normalized)
-        test_output = output.view(test_pix_image)
+            loss.backward()  # compute gradients
+            optimizer.step()  # weight update
+            total_loss += loss.item()
 
-        # output is not in right shape --> should be modified in validation and test too
-        loss = criterion(test_output,test_pix_image)
-        #loss = criterion(output, target_array_normalized)
-
-        loss.backward() # compute gradients
-        optimizer.step() # weight update
-        total_loss += loss.item()
-
-        #index += 1
-
-    return total_loss/len(train_dataset)
+    print(f"Total loss train: {total_loss}")
+    print(f"Total loss train divided by length: {total_loss / len(train_dataset)}")
+    return total_loss / len(train_dataset)
 
 def replace_pixelated_area(pixelated_image,known_array,target_array):
 
