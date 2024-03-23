@@ -8,8 +8,12 @@ import torch.nn as nn
 
 
 if __name__ == '__main__':
-    input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\\dataset\\test"
+    input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\\dataset\\dataset_test"
     train_dataset,validation_dataset,test_dataset = get_images(input_directory_path)
+
+    print(f"Train dataset size: {len(train_dataset.sampler)}")
+    print(f"Validation dataset size: {len(validation_dataset.sampler)}")
+    print(f"Test dataset size: {len(test_dataset.sampler)}")
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -18,10 +22,9 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(cnn_model.parameters())
     criterion = nn.MSELoss() # loss function
 
-    num_epochs = 5
+    num_epochs = 20
     for epoch in range(num_epochs):
         loss_train = train(cnn_model, train_dataset, optimizer, criterion, device)
-        print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {loss_train}")
         loss_validation = validation(cnn_model, validation_dataset, criterion, device)
 
         print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {loss_train} - Validation Loss: {loss_validation}")

@@ -34,7 +34,6 @@ def train(cnn_model, train_dataset, optimizer, criterion, device):
             # print(f"Output shape: {output.shape}")
 
             known_array = known_array.to(dtype=torch.bool)
-
             crop = output[~known_array]
             crop_reshaped = crop.reshape(target_array_normalized.shape)
 
@@ -44,7 +43,7 @@ def train(cnn_model, train_dataset, optimizer, criterion, device):
             optimizer.step()  # weight update
             total_loss += loss.item()
 
-        return total_loss / len(train_dataset)
+    return total_loss / len(train_dataset)
 
 def replace_pixelated_area(pixelated_image,known_array,target_array):
 
