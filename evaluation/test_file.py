@@ -1,5 +1,7 @@
 import torch
 from prep_dataset.helpers import *
+from torchvision import transforms
+from PIL import Image
 
 
 def test(cnn_model, test_dataset, criterion, device):
@@ -8,18 +10,18 @@ def test(cnn_model, test_dataset, criterion, device):
     with torch.no_grad():
         for batch in test_dataset:
             """
-                        for i in batch:
-                            input, mask, target, path
-                            input = batch[0][i]
-                            mask = batch[1][i]
-                            target = batch[2][i]
-                            path = batch[3][i]
-                        """
+            for i in batch:
+                input, mask, target, path
+                input = batch[0][i]
+                mask = batch[1][i]
+                target = batch[2][i]
+                path = batch[3][i]
+            """
             for i, _ in enumerate(batch):
                 pixelated_image = batch[0][i]
                 known_array = batch[1][i]
                 target_array = batch[2][i]
-                _ = batch[3][i]
+                image_path = batch[3][i]
 
                 pixelated_image = pixelated_image.to(device)
                 target_array = target_array.to(device)
@@ -33,6 +35,13 @@ def test(cnn_model, test_dataset, criterion, device):
 
                 loss = criterion(crop_reshaped, target_array_normalized)
                 total_loss += loss.item()
+
+                # Comparing the orginal picture with the one provided by the model
+                # pixelated_image[~known_array] = crop
+                # pil_image_model = transforms.ToPILImage()(pixelated_image.cpu().detach())
+                # image_path = Image.open(image_path)
+                # pil_image_model.show()
+                # image_path.show()
 
                 if i==len(batch[3])-1:
                     break

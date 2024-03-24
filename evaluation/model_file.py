@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 
@@ -22,7 +23,6 @@ class CNNModel(nn.Module):
             nn.ReLU(),
 
             nn.ConvTranspose2d(in_channels=32, out_channels=1, kernel_size=3, stride=1, padding=1),
-            nn.Sigmoid()
         )
 
     def forward(self, x):
