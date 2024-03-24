@@ -16,13 +16,11 @@ from prep_dataset import helpers
 from group_dataset_images import group_images
 import matplotlib.pyplot as plt
 
-def denormalize_output(model_output, min_value, max_value):
-    den_output = model_output*(max_value-min_value)+min_value
-    return den_output
-
 if __name__ == '__main__':
 
-    option = int(input("1 = train\n2 = test\nYour option: "))
+    # option = int(input("1 = train\n2 = test\nYour option: "))
+
+    option = 1
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -32,11 +30,12 @@ if __name__ == '__main__':
     except Exception as e:
         pass
     cnn_model.to(dtype=torch.float64, device=device)
-    optimizer = torch.optim.Adam(cnn_model.parameters())
+    optimizer = torch.optim.Adam(cnn_model.parameters(),lr=0.001)
     criterion = nn.MSELoss()
 
     if option == 1:
         input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\\dataset\\test_v2"
+        #input_directory_path = "D:\\an III\\bachelor's thesis\\resized_images"
         train_dataset,validation_dataset,test_dataset = get_images(input_directory_path)
 
         print(f"Train dataset size: {len(train_dataset.sampler)}")
@@ -92,6 +91,7 @@ if __name__ == '__main__':
 
         for i,image in enumerate(images):
             pix_image=image[0]
+            target_array = image[2]
             #tmp = pix_image.astype(dtype=np.uint8)
             tmp = pix_image.reshape(pix_image.shape[1],pix_image.shape[2])
             input_pil = Image.fromarray(tmp)
@@ -109,11 +109,14 @@ if __name__ == '__main__':
             with torch.no_grad():
                 output = cnn_model(input_)
 
-            mini_pix = input_tensor.min()
-            maxi_pix = input_tensor.max()
-            denormalized_output = denormalize_output(output,mini_pix,maxi_pix)
+            mini_pix = target_array.min()
+            maxi_pix = target_array.max()
 
-            output_pil = transforms.ToPILImage()(output.squeeze(0))
+            output_tmp = output*(maxi_pix-mini_pix)+mini_pix
+            output_tmp = output_tmp.cpu().detach().numpy()
+            output_tmp = output_tmp.reshape(pix_image.shape[1],pix_image.shape[2])
+
+            output_pil = Image.fromarray(output_tmp)
 
             axs[i,0].imshow(input_pil)
             axs[i,0].set_title("Original Image")
