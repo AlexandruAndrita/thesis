@@ -50,7 +50,7 @@ def test(cnn_model, test_dataset, criterion, device):
             axs[0].set_title("Original Image")
             axs[0].axis("off")
 
-            axs[1].imshow(pil_image_model)
+            axs[1].imshow(pil_image_model,cmap='gray')
             axs[1].set_title("Model Output")
             axs[1].axis("off")
 

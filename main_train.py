@@ -34,15 +34,16 @@ if __name__ == '__main__':
     criterion = nn.MSELoss()
 
     if option == 1:
-        input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\\dataset\\test_v2"
+        #input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\\dataset\\test_v2"
         #input_directory_path = "D:\\an III\\bachelor's thesis\\resized_images"
+        input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\dataset\\test"
         train_dataset,validation_dataset,test_dataset = get_images(input_directory_path)
 
         print(f"Train dataset size: {len(train_dataset.sampler)}")
         print(f"Validation dataset size: {len(validation_dataset.sampler)}")
         print(f"Test dataset size: {len(test_dataset.sampler)}")
 
-        num_epochs = 5
+        num_epochs = 3
         losses_train = []
         losses_validation = []
         for epoch in range(num_epochs):
@@ -61,8 +62,8 @@ if __name__ == '__main__':
 
             print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {loss_train} - Validation Loss: {loss_validation}")
 
-        plt.plot([1,2,3,4,5],losses_train,label="Train Loss")
-        plt.plot([1,2,3,4,5],losses_validation, label="Validation Loss")
+        plt.plot(range(1,num_epochs+1),losses_train,label="Train Loss")
+        plt.plot(range(1,num_epochs+1),losses_validation, label="Validation Loss")
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
         plt.legend()
