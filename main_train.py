@@ -36,20 +36,21 @@ if __name__ == '__main__':
     if option == 1:
         #input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\\dataset\\test_v2"
         #input_directory_path = "D:\\an III\\bachelor's thesis\\resized_images"
-        input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\dataset\\test"
+        #input_directory_path = "C:\\Users\\A.Andrita\\Downloads\\test"
+        input_directory_path = "C:\\Users\\A.Andrita\\Downloads\\test"
         train_dataset,validation_dataset,test_dataset = get_images(input_directory_path)
 
         print(f"Train dataset size: {len(train_dataset.sampler)}")
         print(f"Validation dataset size: {len(validation_dataset.sampler)}")
         print(f"Test dataset size: {len(test_dataset.sampler)}")
 
-        num_epochs = 3
+        num_epochs = 10
         losses_train = []
         losses_validation = []
         for epoch in range(num_epochs):
             loss_train = train(cnn_model, train_dataset, optimizer, criterion, device)
             loss_validation = validation(cnn_model, validation_dataset, criterion, device)
-
+            
             if math.isnan(loss_train):
                 losses_train.append(0)
             else:
