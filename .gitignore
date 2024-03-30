@@ -1,4 +1,7 @@
 node_modules
+prep_dataset\__pycache__
+group_dataset_images\__pycache__
+evaluation\__pycache__
 .idea
 package-lock.json
 package.json

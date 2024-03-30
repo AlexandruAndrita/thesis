@@ -63,9 +63,9 @@ def get_images(input_directory):
     # max_width = max(test_data.max_width, validation_data.max_width, training_data.max_width)
 
     # collate_function = lambda x: stack_with_padding(x, max_height, max_width)
-    train_dataset = DataLoader(dataset=training_data,shuffle=True,batch_size=32,collate_fn=stack_as_collate)
-    validation_dataset = DataLoader(dataset=validation_data,shuffle=False,batch_size=32,collate_fn=stack_as_collate)
-    test_dataset = DataLoader(dataset=test_data,shuffle=False,batch_size=32,collate_fn=stack_as_collate)
+    train_dataset = DataLoader(dataset=training_data,shuffle=True,batch_size=16,collate_fn=stack_as_collate)
+    validation_dataset = DataLoader(dataset=validation_data,shuffle=False,batch_size=16,collate_fn=stack_as_collate)
+    test_dataset = DataLoader(dataset=test_data,shuffle=False,batch_size=16,collate_fn=stack_as_collate)
 
     return train_dataset,validation_dataset,test_dataset
 
