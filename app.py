@@ -1,54 +1,107 @@
 import os
-from flask import Flask, render_template, request, send_file
-import torch
+from flask import Flask, render_template, request, redirect, flash
 from evaluation.model_file import CNNModel
 from PIL import Image
+from werkzeug.utils import secure_filename
 import io
+import base64
 import numpy as np
+import torch
+from torchvision import transforms
+from io import BytesIO
+from prep_dataset import to_grayscale
+
 
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+model = CNNModel()
+model.load_state_dict(torch.load("CNNModel.pth"))
+model.eval()
 
-def preprocess_image(image):
-    image=image.convert("L")
-    return image
-
-def predict(image):
-    # load image, feed the image to the model, get the result image
-
-    #model = CNNModel()
-    #model.load_state_dict(torch.load("CNNModel.pth"))
-    #model.eval()
-
-    return image
-
-@app.route("/", methods=["POST","GET"])
-def index():
-    if request.method == "POST":
-        result_image_stream=""
-
-        try:
-            uploaded_image = request.files["imageUploadedDisplayed"]
-
-            image = Image.open(uploaded_image)
-            image_format = image.format
-            preprocessed_image = preprocess_image(image)
-            result_image = predict(preprocessed_image)
-            result_image_stream = io.BytesIO()
-            result_image.save(result_image_stream,format=image_format)
-            result_image_stream.seek(0)
-
-            mimetype_value = ""
-            mimetype_value = "image/"+image_format.lower()
-
-        except Exception as e:
-            print(f"Exception caught: {e}")
-
-        return send_file(result_image_stream,mimetype=mimetype_value)
-
-    elif request.method == "GET":
-        pass
-    return render_template("index.html")
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ['jpg', 'jpeg', "JPG", "JPEG"]
 
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+def save_image(image, filename):
+    downloads_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
+    image_path = os.path.join(downloads_dir, filename)
+    with open(image_path, 'wb') as f:
+        f.write(image)
+    return image_path
+
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return render_template('index.html')
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return render_template('index.html')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_content = file.read()
+            encoded_img = base64.b64encode(file_content).decode('utf-8')
+            return render_template('index.html', filename=encoded_img)
+        else:
+            flash('Invalid file type.')
+    return render_template('index.html')
+
+
+@app.route('/process', methods=['POST'])
+def process_image():
+    filename = request.form['filename']
+    preprocess = transforms.Compose([
+        transforms.Resize((128, 170)),
+        transforms.ToTensor(),
+        # transforms.Normalize(mean=[0.485], std=[0.229])
+    ])
+    image = base64.b64decode(filename)
+    img = Image.open(io.BytesIO(image))
+    np_arr = np.array(img)
+    grayscale_img = to_grayscale.to_grayscale(np_arr)
+    grayscale_img = grayscale_img.squeeze(0)
+    grayscale_img_pil = Image.fromarray(grayscale_img)
+    img_tensor = preprocess(grayscale_img_pil)
+    with torch.no_grad():
+        output_tensor = model(img_tensor)
+
+    output_tensor = output_tensor.squeeze(0)
+    processed_output = output_tensor.cpu().detach().numpy()
+    processed_img_pil = Image.fromarray((processed_output * 255).astype(np.uint8))
+
+    buffered = BytesIO()
+    processed_img_pil.save(buffered, format="JPEG")
+    processed_img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+    return render_template('index.html', filename=filename, processed_filename=processed_img_str)
+
+
+@app.route('/save_image', methods=['POST'])
+def save_image_route():
+    # in bytes
+    filename = request.form['filename']
+    decoded_img = base64.b64decode(filename)
+    saved_path = save_image(decoded_img, 'processed_image.jpg')
+    flash(f'Processed image saved successfully')
+    return redirect('/')
+
+
+@app.route('/discard_images', methods=['POST'])
+def discard_images():
+    flash('Images discarded successfully')
+    return redirect('/')
+
+
+@app.route('/discard_input_image', methods=['POST'])
+def discard_input_image():
+    flash('Input image discarded successfully')
+    return redirect('/')
+
+
+if __name__ == '__main__':
+    app.run()
+
+

@@ -2,40 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/index.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=3d&display=swap">
+    <title>Image Processing</title>
 </head>
 <body>
+    <h1 class="title-font-effect-3d">Image Depixelation</h1>
 
-    <h1 class="font-effect-3d">Image Depixelation</h1>
+    <!--{% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}-->
+
+    <h2 class="subtitle-font-effect-3d" >Upload an Image:</h2>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit" class="button">Upload</button>
+    </form>
 
     <div class="row">
         <div class="column">
-            <div class="card">
-                <p class="informativeText">Input</p>
-                <canvas id="imageUploadedDisplayed"></canvas>
-            </div>
+            {% if filename %}
+                <div class="card">
+                    <h2 class="card-font-effect-3d">Uploaded Image:</h2>
+                    <img src="data:image/jpeg;base64,{{ filename }}" alt="Uploaded Image" width="400">
+                    <div class="button-container">
+                        <form action="/process" class="card-background-color" method="post">
+                            <input type="hidden" name="filename" value="{{ filename }}">
+                            <button type="submit" class="card-button">Process Image</button>
+                        </form>
+                        <form action="/discard_input_image" class="card-background-color" method="post">
+                            <input type="hidden" name="filename" value="{{ filename }}">
+                            <button type="submit" class="card-button">Discard Input Image</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
         </div>
+
         <div class="column">
-            <div class="card">
-                <p class="informativeText">Output</p>
-                <canvas id="imageResult"></canvas>
-            </div>
+            {% if processed_filename %}
+                <div class="card">
+                    <h2 class="card-font-effect-3d">Processed Image</h2>
+                    <img src="data:image/jpeg;base64,{{ processed_filename }}" alt="Processed Image" width="400">
+                    <div class="button-container">
+                        <form action="/save_image" class="card-background-color" method="post">
+                            <input type="hidden" name="filename" value="{{ processed_filename }}">
+                            <button type="submit" class="card-button">Save Processed Image</button>
+                        </form>
+                        <form action="/discard_images" class="card-background-color" method="post">
+                            <button type="submit" class="card-button">Discard Images</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 
-    <input type="file" id="imageUploaded" onchange="uploadImage()" multiple>
+<!--    {% if filename %}-->
+<!--        <form action="/discard_input_image" method="post">-->
+<!--            <input type="hidden" name="filename" value="{{ filename }}">-->
+<!--            <button type="submit" class="card-button">Discard Input Image</button>-->
+<!--        </form>-->
+<!--    {% endif %}-->
 
-    <form action="/" method="POST" enctype="multipart/form-data">
-        <div class="button-container">
-            <button class="button" type="submit" onclick="alert('Image is being processed')">Process Image</button>
-            <button class="button" onclick="saveImage()">Save</button>
-            <button class="button" onclick="cancelAction()">Discard</button>
-        </div>
-    </form>
+    <script>
+        window.onload=function(){
+            var message = "{{ get_flashed_messages() [0] if get_flashed_messages() else '' }}";
+            if(message) {
+                window.alert(message)
+            }
+        }
+    </script>
 
-    <script src="/static/js/index.js"></script>
-    <script src="https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
+<!--    <script src="/static/js/index.js"></script>-->
+
 </body>
 </html>
+
+

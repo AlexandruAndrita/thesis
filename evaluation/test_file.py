@@ -3,11 +3,13 @@ from prep_dataset.helpers import *
 from torchvision import transforms
 from PIL import Image
 import matplotlib.pyplot as plt
+import os
 
 
 def test(cnn_model, test_dataset, criterion, device):
     cnn_model.eval()
     total_loss = 0
+    folder_path = "D:\\an III\\bachelor's thesis\\pixelated_images"
     with torch.no_grad():
         for i,batch in enumerate(test_dataset.dataset):
             """
@@ -26,12 +28,25 @@ def test(cnn_model, test_dataset, criterion, device):
 
             pixelated_image = pixelated_image.to(device)
             target_array = target_array.to(device)
-            
 
+            # normalizing targets
             target_array_normalized = normalize_targets(target_array)
-            pixelated_image=pixelated_image.reshape(1,pixelated_image.shape[0],pixelated_image.shape[1],pixelated_image.shape[2])
-            output = cnn_model(pixelated_image)
-            output=output.reshape(1,output.shape[2],output.shape[3])
+            pixelated_image = pixelated_image.reshape(1, pixelated_image.shape[0], pixelated_image.shape[1],pixelated_image.shape[2])
+
+            # normalizing inputs (pixelated image)
+            pixelated_image_normalized = normalize_targets(pixelated_image)
+            pixelated_image_normalized = pixelated_image_normalized.reshape(1, pixelated_image_normalized.shape[2],pixelated_image_normalized.shape[3])
+
+            # saving the pixelated image locally
+            #pixelated_image_saved = transforms.ToPILImage()(pixelated_image_normalized)
+            #pixelated_image_saved.save(os.path.join(folder_path, f"pix_image{i}.jpg"))
+            # saving the target image locally
+            #target_array_saved = transforms.ToPILImage()(target_array_normalized)
+            #target_array_saved.save(os.path.join(folder_path, f"target_array{i}.jpg"))
+
+            output = cnn_model(pixelated_image_normalized)
+            output=output.reshape(1,output.shape[1],output.shape[2])
+            # normalizing output of the model
             output_normalized = normalize_targets(output)
 
             known_array = known_array.to(dtype=torch.bool)
@@ -42,8 +57,6 @@ def test(cnn_model, test_dataset, criterion, device):
             total_loss += loss.item()
 
             # Comparing the orginal picture with the one provided by the model
-            pixelated_image_normalized = normalize_targets(pixelated_image)
-            pixelated_image_normalized=pixelated_image_normalized.reshape(1,pixelated_image_normalized.shape[2],pixelated_image_normalized.shape[3])
             pil_before_model = transforms.ToPILImage()(pixelated_image_normalized.cpu().detach())
             pixelated_image_normalized[~known_array] = crop
             pil_image_model = transforms.ToPILImage()(pixelated_image_normalized.cpu().detach())
