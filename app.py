@@ -5,19 +5,32 @@ from PIL import Image
 from werkzeug.utils import secure_filename
 import io
 import base64
+import numpy as np
+import torch
+from torchvision import transforms
+from io import BytesIO
+from prep_dataset import to_grayscale
+
 
 app = Flask(__name__)
+model = CNNModel()
+model.load_state_dict(torch.load("CNNModel.pth"))
+model.eval()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ['jpg', 'jpeg', "JPG", "JPEG"]
 
 
-def grayscale_image(image):
-    img = Image.open(io.BytesIO(image)).convert('L').rotate(270)
-    buffered = io.BytesIO()
-    img.save(buffered, format="JPEG")
-    encoded_img = base64.b64encode(buffered.getvalue()).decode('utf-8')
-    return encoded_img
+# def grayscale_image(image):
+#     decoded_image = base64.b64decode(image)
+#     img_np = np.frombuffer(decoded_image, dtype=np.uint8)
+#     img = Image.open(io.BytesIO(img_np)).convert('L')
+#     cnn_output =
+#
+#     buffered = io.BytesIO()
+#     img.save(buffered, format="JPEG")
+#     encoded_img = base64.b64encode(buffered.getvalue()).decode('utf-8')
+#     return encoded_img
 
 
 def save_image(image, filename):
@@ -52,9 +65,30 @@ def upload_file():
 @app.route('/process', methods=['POST'])
 def process_image():
     filename = request.form['filename']
-    decoded_img = base64.b64decode(filename)
-    processed_img = grayscale_image(decoded_img)
-    return render_template('index.html', filename=filename, processed_filename=processed_img)
+    preprocess = transforms.Compose([
+        transforms.Resize((128, 170)),
+        transforms.ToTensor(),
+        # transforms.Normalize(mean=[0.485], std=[0.229])
+    ])
+    image = base64.b64decode(filename)
+    img = Image.open(io.BytesIO(image))
+    np_arr = np.array(img)
+    grayscale_img = to_grayscale.to_grayscale(np_arr)
+    grayscale_img = grayscale_img.squeeze(0)
+    grayscale_img_pil = Image.fromarray(grayscale_img)
+    img_tensor = preprocess(grayscale_img_pil)
+    with torch.no_grad():
+        output_tensor = model(img_tensor)
+
+    output_tensor = output_tensor.squeeze(0)
+    processed_output = output_tensor.cpu().detach().numpy()
+    processed_img_pil = Image.fromarray((processed_output * 255).astype(np.uint8))
+
+    buffered = BytesIO()
+    processed_img_pil.save(buffered, format="JPEG")
+    processed_img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+    return render_template('index.html', filename=filename, processed_filename=processed_img_str)
 
 
 @app.route('/save_image', methods=['POST'])

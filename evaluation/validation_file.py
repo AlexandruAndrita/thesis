@@ -29,8 +29,13 @@ def validation(cnn_model, validation_dataset, criterion, device):
 
             target_array_normalized = normalize_targets(target_array)
             pixelated_image=pixelated_image.reshape(1,pixelated_image.shape[0],pixelated_image.shape[1],pixelated_image.shape[2])
-            output = cnn_model(pixelated_image)
-            output=output.reshape(1,output.shape[2],output.shape[3])
+
+            pixelated_image_normalized = normalize_targets(pixelated_image)
+            pixelated_image_normalized = pixelated_image_normalized.reshape(1, pixelated_image_normalized.shape[2],pixelated_image_normalized.shape[3])
+
+            output = cnn_model(pixelated_image_normalized)
+            output=output.reshape(1,output.shape[1],output.shape[2])
+            # normalizing output of the model
             output_normalized = normalize_targets(output)
 
             known_array = known_array.to(dtype=torch.bool)
@@ -40,26 +45,6 @@ def validation(cnn_model, validation_dataset, criterion, device):
             loss = criterion(crop_reshaped, target_array_normalized)
             total_loss += loss.item()
 
-            # # Comparing the orginal picture with the one provided by the model
-            # pixelated_image_normalized = normalize_targets(pixelated_image)
-            # pixelated_image_normalized[~known_array] = crop
-            # pil_image_model = transforms.ToPILImage()(pixelated_image_normalized.cpu().detach())
-            # image_path = Image.open(image_path)
-            # #pil_image_model.show()
-            # #image_path.show()
-
-            # fig, axs = plt.subplots(1, 2, figsize=(10, 5))
-
-            # axs[0].imshow(image_path)
-            # axs[0].set_title("Original Image")
-            # axs[0].axis("off")
-
-            # axs[1].imshow(pil_image_model,cmap="gray")
-            # axs[1].set_title("Model Output")
-            # axs[1].axis("off")
-
-            # plt.tight_layout()
-            # plt.show()
 
     print(f"Total loss train: {total_loss}")
     print(f"Total loss train divided by length: {total_loss / len(validation_dataset)}")
