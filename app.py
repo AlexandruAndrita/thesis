@@ -13,7 +13,7 @@ def allowed_file(filename):
 
 
 def grayscale_image(image):
-    img = Image.open(io.BytesIO(image)).convert('L')
+    img = Image.open(io.BytesIO(image)).convert('L').rotate(270)
     buffered = io.BytesIO()
     img.save(buffered, format="JPEG")
     encoded_img = base64.b64encode(buffered.getvalue()).decode('utf-8')

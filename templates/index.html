@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=3d&display=swap">
     <title>Image Processing</title>
 </head>
 <body>
+    <h1 class="title-font-effect-3d">Image Depixelation</h1>
+
     <!--{% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul>
@@ -16,37 +20,47 @@
         {% endif %}
     {% endwith %}-->
 
-    <h2>Upload an Image:</h2>
+    <h2 class="subtitle-font-effect-3d" >Upload an Image:</h2>
     <form action="/" method="post" enctype="multipart/form-data">
         <input type="file" name="file">
-        <button type="submit">Upload</button>
+        <button type="submit" class="button">Upload</button>
     </form>
 
-    {% if filename %}
-        <h2>Uploaded Image:</h2>
-        <img src="data:image/jpeg;base64,{{ filename }}" alt="Uploaded Image" width="400">
-        <form action="/process" method="post">
-            <input type="hidden" name="filename" value="{{ filename }}">
-            <button type="submit">Process Image</button>
-        </form>
-    {% endif %}
+    <div class="row">
+        <div class="column">
+            {% if filename %}
+                <div class="card">
+                    <h2 class="card-font-effect-3d">Uploaded Image:</h2>
+                    <img src="data:image/jpeg;base64,{{ filename }}" alt="Uploaded Image" width="400">
+                    <form action="/process" class="card-background-color" method="post">
+                        <input type="hidden" name="filename" value="{{ filename }}">
+                        <button type="submit" class="card-button">Process Image</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
 
-    {% if processed_filename %}
-        <h2>Processed Image</h2>
-        <img src="data:image/jpeg;base64,{{ processed_filename }}" alt="Processed Image" width="400">
-        <form action="/save_image" method="post">
-            <input type="hidden" name="filename" value="{{ processed_filename }}">
-            <button type="submit">Save Processed Image</button>
-        </form>
-        <form action="/discard_images" method="post">
-            <button type="submit">Discard Images</button>
-        </form>
-    {% endif %}
+        <div class="column">
+            {% if processed_filename %}
+                <div class="card">
+                    <h2 class="card-font-effect-3d">Processed Image</h2>
+                    <img src="data:image/jpeg;base64,{{ processed_filename }}" alt="Processed Image" width="400">
+                    <form action="/save_image" class="card-background-color" method="post">
+                        <input type="hidden" name="filename" value="{{ processed_filename }}">
+                        <button type="submit" class="card-button">Save Processed Image</button>
+                    </form>
+                    <form action="/discard_images" class="card-background-color" method="post">
+                        <button type="submit" class="card-button">Discard Images</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 
     {% if filename %}
         <form action="/discard_input_image" method="post">
             <input type="hidden" name="filename" value="{{ filename }}">
-            <button type="submit">Discard Input Image</button>
+            <button type="submit" class="card-button">Discard Input Image</button>
         </form>
     {% endif %}
 </body>
