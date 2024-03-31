@@ -29,6 +29,17 @@
     background-color: #E3B448;
 }
 
+.button-container{
+    display: flex;
+    justify-content: space-between;
+    background-color: #E3B448;
+}
+
+.button-container form{
+    flex: 1;
+    margin: 0 5px;
+}
+
 .row {
     display: flex;
     justify-content: center;

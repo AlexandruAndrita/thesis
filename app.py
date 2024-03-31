@@ -21,18 +21,6 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ['jpg', 'jpeg', "JPG", "JPEG"]
 
 
-# def grayscale_image(image):
-#     decoded_image = base64.b64decode(image)
-#     img_np = np.frombuffer(decoded_image, dtype=np.uint8)
-#     img = Image.open(io.BytesIO(img_np)).convert('L')
-#     cnn_output =
-#
-#     buffered = io.BytesIO()
-#     img.save(buffered, format="JPEG")
-#     encoded_img = base64.b64encode(buffered.getvalue()).decode('utf-8')
-#     return encoded_img
-
-
 def save_image(image, filename):
     downloads_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
     image_path = os.path.join(downloads_dir, filename)
