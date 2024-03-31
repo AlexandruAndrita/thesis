@@ -2,40 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home page</title>
-    <link rel="stylesheet" href="/static/css/index.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=3d&display=swap">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing</title>
 </head>
 <body>
+    <!--{% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}-->
 
-    <h1 class="font-effect-3d">Image Depixelation</h1>
-
-    <div class="row">
-        <div class="column">
-            <div class="card">
-                <p class="informativeText">Input</p>
-                <canvas id="imageUploadedDisplayed"></canvas>
-            </div>
-        </div>
-        <div class="column">
-            <div class="card">
-                <p class="informativeText">Output</p>
-                <canvas id="imageResult"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <input type="file" id="imageUploaded" onchange="uploadImage()" multiple>
-
-    <form action="/" method="POST" enctype="multipart/form-data">
-        <div class="button-container">
-            <button class="button" type="submit" onclick="alert('Image is being processed')">Process Image</button>
-            <button class="button" onclick="saveImage()">Save</button>
-            <button class="button" onclick="cancelAction()">Discard</button>
-        </div>
+    <h2>Upload an Image:</h2>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Upload</button>
     </form>
 
-    <script src="/static/js/index.js"></script>
-    <script src="https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
+    {% if filename %}
+        <h2>Uploaded Image:</h2>
+        <img src="data:image/jpeg;base64,{{ filename }}" alt="Uploaded Image" width="400">
+        <form action="/process" method="post">
+            <input type="hidden" name="filename" value="{{ filename }}">
+            <button type="submit">Process Image</button>
+        </form>
+    {% endif %}
+
+    {% if processed_filename %}
+        <h2>Processed Image</h2>
+        <img src="data:image/jpeg;base64,{{ processed_filename }}" alt="Processed Image" width="400">
+        <form action="/save_image" method="post">
+            <input type="hidden" name="filename" value="{{ processed_filename }}">
+            <button type="submit">Save Processed Image</button>
+        </form>
+        <form action="/discard_images" method="post">
+            <button type="submit">Discard Images</button>
+        </form>
+    {% endif %}
+
+    {% if filename %}
+        <form action="/discard_input_image" method="post">
+            <input type="hidden" name="filename" value="{{ filename }}">
+            <button type="submit">Discard Input Image</button>
+        </form>
+    {% endif %}
 </body>
 </html>
+
+
