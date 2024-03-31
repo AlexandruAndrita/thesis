@@ -32,10 +32,16 @@
                 <div class="card">
                     <h2 class="card-font-effect-3d">Uploaded Image:</h2>
                     <img src="data:image/jpeg;base64,{{ filename }}" alt="Uploaded Image" width="400">
-                    <form action="/process" class="card-background-color" method="post">
-                        <input type="hidden" name="filename" value="{{ filename }}">
-                        <button type="submit" class="card-button">Process Image</button>
-                    </form>
+                    <div class="button-container">
+                        <form action="/process" class="card-background-color" method="post">
+                            <input type="hidden" name="filename" value="{{ filename }}">
+                            <button type="submit" class="card-button">Process Image</button>
+                        </form>
+                        <form action="/discard_input_image" class="card-background-color" method="post">
+                            <input type="hidden" name="filename" value="{{ filename }}">
+                            <button type="submit" class="card-button">Discard Input Image</button>
+                        </form>
+                    </div>
                 </div>
             {% endif %}
         </div>
@@ -59,12 +65,24 @@
         </div>
     </div>
 
-    {% if filename %}
-        <form action="/discard_input_image" method="post">
-            <input type="hidden" name="filename" value="{{ filename }}">
-            <button type="submit" class="card-button">Discard Input Image</button>
-        </form>
-    {% endif %}
+<!--    {% if filename %}-->
+<!--        <form action="/discard_input_image" method="post">-->
+<!--            <input type="hidden" name="filename" value="{{ filename }}">-->
+<!--            <button type="submit" class="card-button">Discard Input Image</button>-->
+<!--        </form>-->
+<!--    {% endif %}-->
+
+    <script>
+        window.onload=function(){
+            var message = "{{ get_flashed_messages() [0] if get_flashed_messages() else '' }}";
+            if(message) {
+                window.alert(message)
+            }
+        }
+    </script>
+
+<!--    <script src="/static/js/index.js"></script>-->
+
 </body>
 </html>
 
