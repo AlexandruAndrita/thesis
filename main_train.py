@@ -30,12 +30,13 @@ if __name__ == '__main__':
     except Exception as e:
         pass
     cnn_model.to(dtype=torch.float64, device=device)
-    optimizer = torch.optim.Adam(cnn_model.parameters(),lr=0.001)
+    optimizer = torch.optim.Adam(cnn_model.parameters(),lr=0.01,weight_decay=1e-5)
     criterion = nn.MSELoss()
 
     if option == 1:
         input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\\dataset\\test_v22"
         #input_directory_path = "D:\\an III\\bachelor's thesis\\resized_images"
+        #input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\\dataset\\test"
         #input_directory_path = "C:\\Users\\A.Andrita\\Downloads\\test"
         #input_directory_path = "C:\\Users\\A.Andrita\\Downloads\\test"
         train_dataset,validation_dataset,test_dataset = get_images(input_directory_path)
@@ -44,32 +45,35 @@ if __name__ == '__main__':
         print(f"Validation dataset size: {len(validation_dataset.sampler)}")
         print(f"Test dataset size: {len(test_dataset.sampler)}")
 
-        num_epochs = 3
+        num_epochs = 10
         losses_train = []
         losses_validation = []
         for epoch in range(num_epochs):
             loss_train = train(cnn_model, train_dataset, optimizer, criterion, device)
             loss_validation = validation(cnn_model, validation_dataset, criterion, device)
-            
-            if math.isnan(loss_train):
-                losses_train.append(0)
-            else:
-                losses_train.append(loss_train)
 
-            if math.isnan(loss_validation):
-                losses_validation.append(0)
-            else:
-                losses_validation.append(loss_validation)
+            if math.isnan(loss_train) or math.isnan(loss_validation):
+                print(f"Stopping training at epoch {epoch}/{num_epochs} because of NaN values.")
+                print(f"Train loss: {loss_train}")
+                print(f"Validation loss: {loss_validation}")
+                num_epochs = epoch + 1
+                break
+
+            losses_train.append(loss_train)
+            losses_validation.append(loss_validation)
 
             print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {loss_train} - Validation Loss: {loss_validation}")
 
-        plt.plot(range(1,num_epochs+1),losses_train,label="Train Loss")
-        plt.plot(range(1,num_epochs+1),losses_validation, label="Validation Loss")
-        plt.xlabel("Epoch")
-        plt.ylabel("Loss")
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+        if num_epochs != 0 and num_epochs != 1:
+            plt.plot(range(1,num_epochs+1),losses_train,label="Train Loss")
+            plt.plot(range(1,num_epochs+1),losses_validation, label="Validation Loss")
+            plt.xlabel("Epoch")
+            plt.ylabel("Loss")
+            plt.legend()
+            plt.grid(True)
+            plt.show()
+        else:
+            print("Plot with training losses vs. validation losses was not done since loss values are NaN")
 
         loss_test = test(cnn_model, test_dataset, criterion, device)
         print(f"Test Loss: {loss_test}")
