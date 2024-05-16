@@ -12,20 +12,18 @@
 
 <!--    {% with messages = get_flashed_messages() %}-->
 <!--        {% if messages %}-->
-<!--            <ul>-->
 <!--                {% for message in messages %}-->
-<!--                    <li>{{ message }}</li>-->
+<!--                    {{ message }}-->
 <!--                {% endfor %}-->
-<!--            </ul>-->
 <!--        {% endif %}-->
 <!--    {% endwith %}-->
 
     <h2 class="subtitle-font-effect-3d" >Upload an Image and Boolean Mask:</h2>
     <form action="/" method="post" enctype="multipart/form-data">
         <label for="file">Image</label>
-        <input type="file" name="file">
+        <input type="file" name="file" id="file">
         <label for="pickle_file">Mask</label>
-        <input type="file" name="pickle_file">
+        <input type="file" name="pickle_file" id="pickle_file">
         <button type="submit" class="button">Upload</button>
     </form>
 
