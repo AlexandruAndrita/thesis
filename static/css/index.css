@@ -68,6 +68,15 @@ img{
     height: auto;
 }
 
+.upload-image-mask label {
+    display: block;
+    margin-bottom: 5px;
+}
+.upload-image-mask input[type="file"] {
+    display: block;
+    margin-bottom: 20px;
+}
+
 .button {
     background-color: #3A6B35;
     color: white;
