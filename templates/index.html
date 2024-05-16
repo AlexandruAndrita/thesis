@@ -10,15 +10,15 @@
 <body>
     <h1 class="title-font-effect-3d">Image Depixelation</h1>
 
-    <!--{% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}-->
+<!--    {% with messages = get_flashed_messages() %}-->
+<!--        {% if messages %}-->
+<!--            <ul>-->
+<!--                {% for message in messages %}-->
+<!--                    <li>{{ message }}</li>-->
+<!--                {% endfor %}-->
+<!--            </ul>-->
+<!--        {% endif %}-->
+<!--    {% endwith %}-->
 
     <h2 class="subtitle-font-effect-3d" >Upload an Image and Boolean Mask:</h2>
     <form action="/" method="post" enctype="multipart/form-data">
@@ -57,18 +57,27 @@
         </div>
 
         <div class="column">
-            {% if processed_filename %}
+            {% if processed_filenames %}
                 <div class="card">
-                    <h2 class="card-font-effect-3d">Processed Image</h2>
-                    <img src="data:image/jpeg;base64,{{ processed_filename }}" alt="Processed Image" width="400">
-                    <div class="button-container">
-                        <form action="/save_image" class="card-background-color" method="post">
-                            <input type="hidden" name="filename" value="{{ processed_filename }}">
-                            <button type="submit" class="card-button">Save Processed Image</button>
-                        </form>
-                        <form action="/discard_images" class="card-background-color" method="post">
-                            <button type="submit" class="card-button">Discard Images</button>
-                        </form>
+                    <div class="slideshow-container">
+                        {% for processed_filename in processed_filenames %}
+                            <div class="processedImages fade">
+                                <div class="imageNumbering">{{ loop.index }} / {{ processed_filenames | length }}</div>
+                                <h2 class="card-font-effect-3d">Processed Image</h2>
+                                <img src="data:image/jpeg;base64,{{ processed_filename }}" alt="Processed Image" width="400">
+                                <div class="button-container">
+                                    <form action="/save_image" class="card-background-color" method="post">
+                                        <input type="hidden" name="filename" value="{{ processed_filename }}">
+                                        <button type="submit" class="card-button">Save Processed Image</button>
+                                    </form>
+                                    <form action="/discard_images" class="card-background-color" method="post">
+                                        <button type="submit" class="card-button">Discard Images</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <a class="prev" onclick="previousNextImage(-1)">❮</a>
+                        <a class="next" onclick="previousNextImage(1)">❯</a>
                     </div>
                 </div>
             {% endif %}
@@ -83,6 +92,8 @@
 <!--    {% endif %}-->
 
     <script>
+
+
         window.onload=function(){
             var message = "{{ get_flashed_messages() [0] if get_flashed_messages() else '' }}";
             if(message) {
@@ -91,7 +102,7 @@
         }
     </script>
 
-<!--    <script src="/static/js/index.js"></script>-->
+    <script src="/static/js/index.js"></script>
 
 </body>
 </html>
