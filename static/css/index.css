@@ -49,6 +49,8 @@
     flex: 1;
     padding: 10px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
 }
 
 .card {
@@ -58,6 +60,12 @@
     text-align: center;
     background-color: #E3B448;
     border-radius: 20px;
+    flex: 1;
+}
+
+img{
+    max-width: 100%;
+    height: auto;
 }
 
 .button {

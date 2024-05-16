@@ -20,11 +20,20 @@
         {% endif %}
     {% endwith %}-->
 
-    <h2 class="subtitle-font-effect-3d" >Upload an Image:</h2>
+    <h2 class="subtitle-font-effect-3d" >Upload an Image and Boolean Mask:</h2>
     <form action="/" method="post" enctype="multipart/form-data">
+        <label for="file">Image</label>
         <input type="file" name="file">
+        <label for="pickle_file">Mask</label>
+        <input type="file" name="pickle_file">
         <button type="submit" class="button">Upload</button>
     </form>
+
+<!--    <h2 class="subtitle-font-effect-3d">Upload a Pickle File:</h2>-->
+<!--    <form action="/upload_pickle" method="post" enctype="multipart/form-data">-->
+<!--        -->
+<!--        <button type="submit" class="button">Upload</button>-->
+<!--    </form>-->
 
     <div class="row">
         <div class="column">
@@ -35,6 +44,7 @@
                     <div class="button-container">
                         <form action="/process" class="card-background-color" method="post">
                             <input type="hidden" name="filename" value="{{ filename }}">
+                            <input type="hidden" name="pickle_file" value="{{ pickle_file }}">
                             <button type="submit" class="card-button">Process Image</button>
                         </form>
                         <form action="/discard_input_image" class="card-background-color" method="post">
