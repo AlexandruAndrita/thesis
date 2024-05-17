@@ -156,13 +156,13 @@ def save_image_route():
 
 @app.route('/discard_images', methods=['POST'])
 def discard_images():
-    flash('Images discarded successfully','info')
+    #flash('Images discarded successfully','discardImage')
     return redirect('/')
 
 
 @app.route('/discard_input_image', methods=['POST'])
 def discard_input_image():
-    flash('Input image discarded successfully','info')
+    #flash('Input image discarded successfully','discardImage')
     return redirect('/')
 
 

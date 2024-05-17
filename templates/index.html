@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=3d&display=swap">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
     <link rel="stylesheet" href="/static/css/index.css">
-    <title>Image Depixelation</title>
     <link rel="icon" type="image/x-icon" href="/static/icons/appIcon.png">
+    <title>Image Depixelation</title>
 </head>
 <body>
     <h1 class="title-font-effect-3d">Image Depixelation</h1>
@@ -21,7 +20,7 @@
                             text: '{{ message }}',
                             allowOutsideClick: false,
                             allowEscapeKey: false
-                        }
+                        };
 
                         switch ('{{ category }}'){
                             case 'success':
@@ -30,7 +29,7 @@
                                 break;
                             case 'error':
                                 defaultConfiguration.title='Error';
-                                defaultConfiguration.icon='error';
+                                defaultConfiguration.icon='info';
                                 break;
                             case 'info':
                                 defaultConfiguration.title='Information';
@@ -40,7 +39,7 @@
                                 defaultConfiguration.title='Success';
                                 defaultConfiguration.icon='success';
                                 defaultConfiguration.showConfirmButton=false;
-                                defaultConfiguration.timer=50000;
+                                defaultConfiguration.timer=2000;
                                 defaultConfiguration.position='center';
                                 break;
                         }
@@ -73,7 +72,7 @@
                             <input type="hidden" name="pickle_file" value="{{ pickle_file }}">
                             <button type="submit" class="card-button">Process Image</button>
                         </form>
-                        <form action="/discard_input_image" class="card-background-color" method="post">
+                        <form action="/discard_input_image" class="card-background-color" method="post" onsubmit="confirmDiscardImages('/discard_input_image'); return false">
                             <input type="hidden" name="filename" value="{{ filename }}">
                             <button type="submit" class="card-button">Discard Input Image</button>
                         </form>
@@ -96,7 +95,7 @@
                                         <input type="hidden" name="filename" value="{{ processed_filename }}">
                                         <button type="submit" class="card-button">Save Processed Image</button>
                                     </form>
-                                    <form action="/discard_images" class="card-background-color" method="post">
+                                    <form action="/discard_images" class="card-background-color" method="post" onsubmit="confirmDiscardImages('/discard_images'); return false">
                                         <button type="submit" class="card-button">Discard Images</button>
                                     </form>
                                 </div>
