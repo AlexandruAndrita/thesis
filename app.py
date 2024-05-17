@@ -53,15 +53,15 @@ def save_image(image, filename):
 def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('No file part')
+            flash('No file part','error')
             return render_template('index.html')
         file = request.files['file']
         pickle_file = request.files['pickle_file']
         if file.filename == '':
-            flash('No image selected')
+            flash('No image selected','error')
             return render_template('index.html')
         if pickle_file.filename == '':
-            flash('No boolean mask selected')
+            flash('No boolean mask selected','error')
             return render_template('index.html')
         if file and allowed_file(file.filename) and allowed_pickle(pickle_file.filename):
             filename = secure_filename(file.filename)
@@ -71,7 +71,7 @@ def upload_file():
             encoded_img = base64.b64encode(file_content).decode('utf-8')
             return render_template('index.html', filename=encoded_img, pickle_file=encoded_pickle)
         else:
-            flash('Invalid file type.')
+            flash('Invalid file type.','error')
     return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
@@ -92,6 +92,7 @@ def process_image():
     grayscale_img = grayscale_img.reshape(grayscale_img.shape[1],grayscale_img.shape[2],1).mean(axis=2)
     known_array = known_array.squeeze(0)
 
+    # flash('Processing image...','processing')
     final_knn10distance = find_model_output(
         regressor=KNeighborsRegressor(n_neighbors=10, weights='distance'),
         known_array = known_array,
@@ -149,19 +150,19 @@ def save_image_route():
     filename = request.form['filename']
     decoded_img = base64.b64decode(filename)
     saved_path = save_image(decoded_img, 'processed_image.jpg')
-    flash(f'Image saved successfully. Discarding input')
+    flash(f'Image saved successfully. Discarding input','imageSaved')
     return redirect('/')
 
 
 @app.route('/discard_images', methods=['POST'])
 def discard_images():
-    flash('Images discarded successfully')
+    flash('Images discarded successfully','info')
     return redirect('/')
 
 
 @app.route('/discard_input_image', methods=['POST'])
 def discard_input_image():
-    flash('Input image discarded successfully')
+    flash('Input image discarded successfully','info')
     return redirect('/')
 
 
