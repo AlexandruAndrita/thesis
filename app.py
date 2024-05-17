@@ -92,6 +92,12 @@ def process_image():
     grayscale_img = grayscale_img.reshape(grayscale_img.shape[1],grayscale_img.shape[2],1).mean(axis=2)
     known_array = known_array.squeeze(0)
 
+    # cannot use np.array_equal because the data types of the arrays are different --> must be checked
+    # if not np.array_equal(known_array,grayscale_img):
+    if known_array.shape[0]!=grayscale_img.shape[0] or known_array.shape[1]!=grayscale_img.shape[1]:
+        flash("Shapes of Image and Mask do not match",'error')
+        return redirect('/')
+
     # flash('Processing image...','processing')
     final_knn10distance = find_model_output(
         regressor=KNeighborsRegressor(n_neighbors=10, weights='distance'),

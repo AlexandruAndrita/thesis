@@ -1,10 +1,4 @@
-function previousNextImage(n)
-{
-  showSlides(imageIndex += n);
-}
-
 function confirmDiscardImages(endpoint) {
-    console.log(endpoint);
     let discardImageConfiguration = {
         title: 'Are you sure?',
         icon: 'warning',
@@ -51,17 +45,24 @@ function confirmDiscardImages(endpoint) {
 function showSlides(n)
 {
   let processedImages = document.getElementsByClassName("processedImages");
-  let dots = document.getElementsByClassName("dot");
-  if (n > processedImages.length) {imageIndex = 1}
-  if (n < 1) {imageIndex = processedImages.length}
-  for (let i = 0; i < processedImages.length; i++) {
+  if (n > processedImages.length)
+  {
+      imageIndex = 1
+  }
+  if (n < 1)
+  {
+      imageIndex = processedImages.length
+  }
+  for (let i = 0; i < processedImages.length; i++)
+  {
     processedImages[i].style.display = "none";
   }
-  for (i = 0; i < dots.length; i++) {
-    dots[i].className = dots[i].className.replace(" active", "");
-  }
   processedImages[imageIndex-1].style.display = "block";
-  dots[imageIndex-1].className += " active";
+}
+
+function previousNextImage(n)
+{
+  showSlides(imageIndex += n);
 }
 
 let imageIndex = 1;
