@@ -202,7 +202,8 @@ img{
 .swal2-timer-progress-bar-container,
 .swal2-icon,
 /*.swal2-success-ring,*/
-.swal2-icon-content{
+.swal2-icon-content,
+.swal2-loader{
     background-color: #ffffff;
 }
 

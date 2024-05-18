@@ -67,7 +67,7 @@
                     <h2 class="card-font-effect-3d">Uploaded Image:</h2>
                     <img src="data:image/jpeg;base64,{{ filename }}" alt="Uploaded Image" width="400">
                     <div class="button-container">
-                        <form action="/process" class="card-background-color" method="post">
+                        <form id="processForm" action="/process" class="card-background-color" method="post">
                             <input type="hidden" name="filename" value="{{ filename }}">
                             <input type="hidden" name="pickle_file" value="{{ pickle_file }}">
                             <button type="submit" class="card-button">Process Image</button>
@@ -110,6 +110,7 @@
     </div>
 
     <script src="/static/js/index.js"></script>
+    <script src="/static/js/processImage.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 </body>

@@ -98,7 +98,6 @@ def process_image():
         flash("Shapes of Image and Mask do not match",'error')
         return redirect('/')
 
-    # flash('Processing image...','processing')
     final_knn10distance = find_model_output(
         regressor=KNeighborsRegressor(n_neighbors=10, weights='distance'),
         known_array = known_array,
