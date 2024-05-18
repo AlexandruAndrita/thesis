@@ -14,39 +14,8 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        let defaultConfiguration = {
-                            text: '{{ message }}',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        };
-
-                        switch ('{{ category }}'){
-                            case 'success':
-                                defaultConfiguration.title='Success';
-                                defaultConfiguration.icon='success';
-                                break;
-                            case 'error':
-                                defaultConfiguration.title='Error';
-                                defaultConfiguration.icon='error';
-                                break;
-                            case 'info':
-                                defaultConfiguration.title='Information';
-                                defaultConfiguration.icon='info';
-                                break;
-                            case 'imageSaved':
-                                defaultConfiguration.title='Success';
-                                defaultConfiguration.icon='success';
-                                defaultConfiguration.showConfirmButton=false;
-                                defaultConfiguration.timer=1000;
-                                defaultConfiguration.position='center';
-                                break;
-                        }
-
-                        Swal.fire(defaultConfiguration);
-                    });
-                </script>
+                <div class="alert-messages" data-category="{{ category }}" data-message="{{ message }}">
+                </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
@@ -110,6 +79,7 @@
     </div>
 
     <script src="/static/js/index.js"></script>
+    <script src="/static/js/alertMessages.js"></script>
     <script src="/static/js/processImage.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
