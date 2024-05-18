@@ -193,23 +193,41 @@ img{
     to {opacity: 1}
 }
 
-.swal2-text,
+.swal2-popup,
 .swal2-title,
 .swal2-content,
-.swal2-header,
 .swal2-html-container,
 .swal2-actions,
+.swal2-footer,
+.swal2-header,
 .swal2-timer-progress-bar-container,
-.swal2-icon,
-.swal2-icon-content,
 .swal2-loader{
-    background-color: #ffffff;
+    background-color: #bfbfbf !important;
+    color: #ffffff !important;
 }
 
-.swal2-success-ring,
-.swal2-x-mark{
+.swal2-warning,
+.swal2-icon,
+.swal2-icon-content{
+    background-color: #bfbfbf !important;
+    color: #ff9900 !important;
+    border-color: #ff9900 !important;
+}
+
+.swal2-x-mark,
+.swal2-icon.swal2-error{
     background-color: transparent;
- }
+    color: #ff3300 !important;
+    border-color: #ff3300 !important;
+}
 
+.swal2-icon.swal2-error [class^=swal2-x-mark-line] {
+    background-color: #ff3300 !important;
+}
 
-
+.swal2-icon.swal2-success,
+.swal2-success-ring{
+    background-color: transparent;
+    color: #a5dc86 !important;
+    border-color: #a5dc86 !important;
+}
