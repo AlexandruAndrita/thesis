@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/index.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=3d&display=swap">
-    <title>Image Processing</title>
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="icon" type="image/x-icon" href="/static/icons/appIcon.png">
+    <title>Image Depixelation</title>
 </head>
 <body>
     <h1 class="title-font-effect-3d">Image Depixelation</h1>
 
-<!--    {% with messages = get_flashed_messages() %}-->
-<!--        {% if messages %}-->
-<!--                {% for message in messages %}-->
-<!--                    {{ message }}-->
-<!--                {% endfor %}-->
-<!--        {% endif %}-->
-<!--    {% endwith %}-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert-messages" data-category="{{ category }}" data-message="{{ message }}">
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     <h2 class="subtitle-font-effect-3d" >Upload an Image and Boolean Mask:</h2>
     <form action="/" method="post" enctype="multipart/form-data">
@@ -27,12 +29,6 @@
         <button type="submit" class="button">Upload</button>
     </form>
 
-<!--    <h2 class="subtitle-font-effect-3d">Upload a Pickle File:</h2>-->
-<!--    <form action="/upload_pickle" method="post" enctype="multipart/form-data">-->
-<!--        -->
-<!--        <button type="submit" class="button">Upload</button>-->
-<!--    </form>-->
-
     <div class="row">
         <div class="column">
             {% if filename %}
@@ -40,12 +36,12 @@
                     <h2 class="card-font-effect-3d">Uploaded Image:</h2>
                     <img src="data:image/jpeg;base64,{{ filename }}" alt="Uploaded Image" width="400">
                     <div class="button-container">
-                        <form action="/process" class="card-background-color" method="post">
+                        <form id="processForm" action="/process" class="card-background-color" method="post">
                             <input type="hidden" name="filename" value="{{ filename }}">
                             <input type="hidden" name="pickle_file" value="{{ pickle_file }}">
                             <button type="submit" class="card-button">Process Image</button>
                         </form>
-                        <form action="/discard_input_image" class="card-background-color" method="post">
+                        <form action="/discard_input_image" class="card-background-color" method="post" onsubmit="confirmDiscardImages('/discard_input_image'); return false">
                             <input type="hidden" name="filename" value="{{ filename }}">
                             <button type="submit" class="card-button">Discard Input Image</button>
                         </form>
@@ -68,7 +64,7 @@
                                         <input type="hidden" name="filename" value="{{ processed_filename }}">
                                         <button type="submit" class="card-button">Save Processed Image</button>
                                     </form>
-                                    <form action="/discard_images" class="card-background-color" method="post">
+                                    <form action="/discard_images" class="card-background-color" method="post" onsubmit="confirmDiscardImages('/discard_images'); return false">
                                         <button type="submit" class="card-button">Discard Images</button>
                                     </form>
                                 </div>
@@ -82,25 +78,10 @@
         </div>
     </div>
 
-<!--    {% if filename %}-->
-<!--        <form action="/discard_input_image" method="post">-->
-<!--            <input type="hidden" name="filename" value="{{ filename }}">-->
-<!--            <button type="submit" class="card-button">Discard Input Image</button>-->
-<!--        </form>-->
-<!--    {% endif %}-->
-
-    <script>
-
-
-        window.onload=function(){
-            var message = "{{ get_flashed_messages() [0] if get_flashed_messages() else '' }}";
-            if(message) {
-                window.alert(message)
-            }
-        }
-    </script>
-
     <script src="/static/js/index.js"></script>
+    <script src="/static/js/alertMessages.js"></script>
+    <script src="/static/js/processImage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 </body>
 </html>
