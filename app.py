@@ -92,7 +92,7 @@ def process_image():
         return redirect('/')
 
     processed_filenames = list()
-    if grayscale_img.shape[0] in [128,170] and grayscale_img.shape[1] in [128,170]:
+    if grayscale_img.shape[0] in [128,170] and grayscale_img.shape[1] in [128,170] and grayscale_img.shape[0]!=grayscale_img.shape[1]:
         model = CNNModel()
         model.load_state_dict(torch.load("CNNModel.pth"))
         model.eval()
