@@ -82,8 +82,7 @@ def process_image():
     known_array = pickle.loads(pickle_bytes)
     # preprocess = transforms.Compose([
     #     transforms.Resize((128, 170)),
-    #     transforms.ToTensor(),
-    #     # transforms.Normalize(mean=[0.485], std=[0.229])
+    #     transforms.ToTensor()
     # ])
     image = base64.b64decode(filename)
     img = Image.open(io.BytesIO(image))
@@ -92,23 +91,27 @@ def process_image():
     grayscale_img = grayscale_img.reshape(grayscale_img.shape[1],grayscale_img.shape[2],1).mean(axis=2)
     known_array = known_array.squeeze(0)
 
-    # cannot use np.array_equal because the data types of the arrays are different --> must be checked
-    # if not np.array_equal(known_array,grayscale_img):
     if known_array.shape[0]!=grayscale_img.shape[0] or known_array.shape[1]!=grayscale_img.shape[1]:
         flash("Shapes of Image and Mask do not match",'error')
         return redirect('/')
 
-    final_knn10distance = find_model_output(
-        regressor=KNeighborsRegressor(n_neighbors=10, weights='distance'),
+    final_knn20neighbors = find_model_output(
+        regressor=KNeighborsRegressor(n_neighbors=20, metric='canberra'),
         known_array = known_array,
         image = grayscale_img
     )
 
-    final_knn2 = find_model_output(
-        regressor=KNeighborsRegressor(n_neighbors=2),
+    final_knn25neighbors = find_model_output(
+        regressor=KNeighborsRegressor(n_neighbors=25, weights='distance'),
         known_array=known_array,
         image=grayscale_img
     )
+
+    # final_knn2 = find_model_output(
+    #     regressor=KNeighborsRegressor(n_neighbors=2),
+    #     known_array=known_array,
+    #     image=grayscale_img
+    # )
 
     final_randomforest = find_model_output(
         regressor=RandomForestRegressor(n_estimators=100),
@@ -122,9 +125,16 @@ def process_image():
         image=grayscale_img
     )
 
+    # base = make_pipeline(GaussianRandomProjection(n_components=15),DecisionTreeRegressor(max_depth=20, max_features=15))
+    # final_adaboost001 = find_model_output(
+    #     regressor=AdaBoostRegressor(base, n_estimators=100, learning_rate=0.001),
+    #     known_array=known_array,
+    #     image=grayscale_img
+    # )
+
     base = make_pipeline(GaussianRandomProjection(n_components=10),DecisionTreeRegressor(max_depth=10, max_features=5))
-    final_adaboost = find_model_output(
-        regressor=AdaBoostRegressor(base, n_estimators=50, learning_rate=0.05),
+    final_adaboost01 = find_model_output(
+        regressor=AdaBoostRegressor(base, n_estimators=50, learning_rate=0.01),
         known_array=known_array,
         image=grayscale_img
     )
@@ -140,11 +150,13 @@ def process_image():
     # processed_img_pil = Image.fromarray((processed_output * 255).astype(np.uint8))
 
     processed_filenames = list()
+    processed_filenames.append(prepare_image_for_interface(final_knn20neighbors))
+    processed_filenames.append(prepare_image_for_interface(final_knn25neighbors))
+    # processed_filenames.append(prepare_image_for_interface(final_knn2))
     processed_filenames.append(prepare_image_for_interface(final_randomforest))
-    processed_filenames.append(prepare_image_for_interface(final_adaboost))
-    processed_filenames.append(prepare_image_for_interface(final_knn10distance))
-    processed_filenames.append(prepare_image_for_interface(final_knn2))
     processed_filenames.append(prepare_image_for_interface(final_decisiontressdepth40leaf7))
+    # processed_filenames.append(prepare_image_for_interface(final_adaboost001))
+    processed_filenames.append(prepare_image_for_interface(final_adaboost01))
 
     return render_template('index.html', filename=filename, processed_filenames=processed_filenames)
 
