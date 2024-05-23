@@ -24,9 +24,6 @@ from evaluation.train_individual_model import find_model_output
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-model = CNNModel()
-model.load_state_dict(torch.load("CNNModel.pth"))
-model.eval()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ['jpg', 'jpeg', "JPG", "JPEG"]
@@ -80,13 +77,12 @@ def process_image():
     pickle_file = request.form['pickle_file']
     pickle_bytes = base64.b64decode(pickle_file)
     known_array = pickle.loads(pickle_bytes)
-    # preprocess = transforms.Compose([
-    #     transforms.Resize((128, 170)),
-    #     transforms.ToTensor()
-    # ])
     image = base64.b64decode(filename)
     img = Image.open(io.BytesIO(image))
     np_arr = np.array(img)
+    """
+    converting user input (user's image) to grayscale image
+    """
     grayscale_img = to_grayscale.to_grayscale(np_arr)
     grayscale_img = grayscale_img.reshape(grayscale_img.shape[1],grayscale_img.shape[2],1).mean(axis=2)
     known_array = known_array.squeeze(0)
@@ -94,6 +90,33 @@ def process_image():
     if known_array.shape[0]!=grayscale_img.shape[0] or known_array.shape[1]!=grayscale_img.shape[1]:
         flash("Shapes of Image and Mask do not match",'error')
         return redirect('/')
+
+    processed_filenames = list()
+    if grayscale_img.shape[0] in [128,170] and grayscale_img.shape[1] in [128,170] and grayscale_img.shape[0]!=grayscale_img.shape[1]:
+        model = CNNModel()
+        model.load_state_dict(torch.load("CNNModel.pth"))
+        model.eval()
+        grayscale_img_tensor=torch.tensor(grayscale_img.copy(), dtype=torch.float32).unsqueeze(0)
+        grayscale_img_tensor=torch.div(grayscale_img_tensor,255.0)
+
+        with torch.no_grad():
+            output = model(grayscale_img_tensor)
+
+        grayscale_img_tensor=grayscale_img_tensor.squeeze(0)
+        output = output.squeeze(0)
+
+        grayscale_img_tensor = torch.mul(grayscale_img_tensor, 255.0)
+        output = torch.mul(output,255.0)
+
+        output = output.cpu().detach().numpy()
+        grayscale_img_tensor = grayscale_img_tensor.cpu().detach().numpy()
+
+        grayscale_img_tensor[known_array==0]=output[known_array==0]
+
+        grayscale_img_tensor=grayscale_img_tensor.reshape(grayscale_img.shape[0],grayscale_img.shape[1])
+        known_array = known_array.reshape(grayscale_img.shape[0],grayscale_img.shape[1])
+        processed_filenames.append(prepare_image_for_interface(grayscale_img_tensor)) # output using the boolean mask
+        processed_filenames.append(prepare_image_for_interface(output)) # whole output from model
 
     final_knn20neighbors = find_model_output(
         regressor=KNeighborsRegressor(n_neighbors=20, metric='canberra'),
@@ -139,17 +162,6 @@ def process_image():
         image=grayscale_img
     )
 
-    # grayscale_img = grayscale_img.squeeze(0)
-    # grayscale_img_pil = Image.fromarray(grayscale_img)
-    # img_tensor = preprocess(grayscale_img_pil)
-    # with torch.no_grad():
-    #     output_tensor = model(img_tensor)
-    #
-    # output_tensor = output_tensor.squeeze(0)
-    # processed_output = output_tensor.cpu().detach().numpy()
-    # processed_img_pil = Image.fromarray((processed_output * 255).astype(np.uint8))
-
-    processed_filenames = list()
     processed_filenames.append(prepare_image_for_interface(final_knn20neighbors))
     processed_filenames.append(prepare_image_for_interface(final_knn25neighbors))
     # processed_filenames.append(prepare_image_for_interface(final_knn2))
