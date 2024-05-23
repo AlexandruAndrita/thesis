@@ -18,7 +18,6 @@ def validation(cnn_model, validation_dataset, criterion, device):
                 target = batch[2][i]
                 path = batch[3][i]
             """
-            # for i, _ in enumerate(batch):
             pixelated_image = torch.from_numpy(batch[0])
             known_array = torch.from_numpy(batch[1])
             target_array = torch.from_numpy(batch[2])
@@ -28,13 +27,13 @@ def validation(cnn_model, validation_dataset, criterion, device):
             target_array = target_array.to(device)
 
             target_array_normalized = normalize_targets(target_array)
-            pixelated_image=pixelated_image.reshape(1,pixelated_image.shape[0],pixelated_image.shape[1],pixelated_image.shape[2])
+            pixelated_image=pixelated_image.reshape(1, pixelated_image.shape[0], pixelated_image.shape[1], pixelated_image.shape[2])
 
             pixelated_image_normalized = normalize_targets(pixelated_image)
-            pixelated_image_normalized = pixelated_image_normalized.reshape(1, pixelated_image_normalized.shape[2],pixelated_image_normalized.shape[3])
+            pixelated_image_normalized = pixelated_image_normalized.reshape(1, pixelated_image_normalized.shape[2], pixelated_image_normalized.shape[3])
 
             output = cnn_model(pixelated_image_normalized)
-            output=output.reshape(1,output.shape[1],output.shape[2])
+            output = output.reshape(1, output.shape[1], output.shape[2])
             # normalizing output of the model
             output_normalized = normalize_targets(output)
 
@@ -45,7 +44,6 @@ def validation(cnn_model, validation_dataset, criterion, device):
             loss = criterion(crop_reshaped, target_array_normalized)
             total_loss += loss.item()
 
-
-    print(f"Total loss train: {total_loss}")
-    print(f"Total loss train divided by length: {total_loss / len(validation_dataset)}")
+    # print(f"Total loss train: {total_loss}")
+    # print(f"Total loss train divided by length: {total_loss / len(validation_dataset)}")
     return total_loss / len(validation_dataset)

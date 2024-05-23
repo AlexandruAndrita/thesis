@@ -1,5 +1,5 @@
 import numpy as np
-from torchvision import transforms
+
 
 def data_validation(image: np.ndarray,x:int,y:int,width:int,height:int,size:int):
     if len(image.shape)!=3:
@@ -13,6 +13,7 @@ def data_validation(image: np.ndarray,x:int,y:int,width:int,height:int,size:int)
     if y<0 or y+height>image.shape[1]: # y + height > height
         raise ValueError("Starting point - y - is invalid. The pixelated area would exceed the image height.")
 
+
 def change_pixels(i,j,f_pixelated_image,f_known_array,size_i,size_j):
     values = f_pixelated_image[i:i + size_i, j:j + size_j]
     # if len(values) != 0:
@@ -21,6 +22,7 @@ def change_pixels(i,j,f_pixelated_image,f_known_array,size_i,size_j):
         f_pixelated_image[i:i + size_i, j:j + size_j] = mean
         f_known_array[i:i + size_i, j:j + size_j] = False
     return f_pixelated_image,f_known_array
+
 
 """
 pixelated_image -> returns (1,H,W)

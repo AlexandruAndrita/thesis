@@ -15,7 +15,6 @@ from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor
 from sklearn.random_projection import GaussianRandomProjection
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.pipeline import make_pipeline
-from torchvision import transforms
 
 from evaluation.model_file import CNNModel
 from prep_dataset import to_grayscale
@@ -25,11 +24,14 @@ from evaluation.train_individual_model import find_model_output
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ['jpg', 'jpeg', "JPG", "JPEG"]
 
+
 def allowed_pickle(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ['pkl']
+
 
 def prepare_image_for_interface(image):
     final_image_pil = Image.fromarray(image.astype(np.uint8))
@@ -37,6 +39,7 @@ def prepare_image_for_interface(image):
     final_image_pil.save(buffered, format="JPEG")
     processed_img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
     return processed_img_str
+
 
 def save_image(image, filename):
     downloads_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
@@ -70,6 +73,7 @@ def upload_file():
         else:
             flash('Invalid file type.','error')
     return render_template('index.html')
+
 
 @app.route('/process', methods=['POST'])
 def process_image():
@@ -185,13 +189,11 @@ def save_image_route():
 
 @app.route('/discard_images', methods=['POST'])
 def discard_images():
-    #flash('Images discarded successfully','discardImage')
     return redirect('/')
 
 
 @app.route('/discard_input_image', methods=['POST'])
 def discard_input_image():
-    #flash('Input image discarded successfully','discardImage')
     return redirect('/')
 
 

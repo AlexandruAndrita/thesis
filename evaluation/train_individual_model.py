@@ -1,6 +1,7 @@
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+
 def find_model_output(regressor, known_array, image, train_size=0.02):
     height, width = image.shape
     flat_image = image.reshape(-1)
@@ -17,6 +18,6 @@ def find_model_output(regressor, known_array, image, train_size=0.02):
 
     flat_picture = flat_picture.reshape(image.shape[0],image.shape[1])
 
-    final_image[known_array==0] = flat_picture[known_array==0]
+    final_image[known_array == 0] = flat_picture[known_array == 0]
 
     return final_image

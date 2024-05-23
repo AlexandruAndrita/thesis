@@ -1,6 +1,7 @@
 import numpy as np
 import prep_dataset.helpers as mathematical_formulas
 
+
 def apply_formulas(array: np.ndarray):
     array=np.divide(array,255)
     array=np.where(array<=0.04045,mathematical_formulas.less_equal_than(array),
@@ -15,6 +16,7 @@ def apply_formulas(array: np.ndarray):
     y=np.where(y_linear<=0.003130,y_linear*12.92,1.055*np.power(y_linear,1/2.4)-0.055)
     y=mathematical_formulas.normalize_output(y)
     return y
+
 
 def to_grayscale(pil_image: np.ndarray) -> np.ndarray:
     # 2D image - grayscale

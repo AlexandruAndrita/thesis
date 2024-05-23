@@ -1,20 +1,17 @@
 import math
+import torch
+import torch.nn as nn
+from PIL import Image
+from torchvision import transforms
+import matplotlib.pyplot as plt
 
+from group_dataset_images import group_images
 from group_dataset_images.prepare_datasets import get_images
 from evaluation.model_file import CNNModel
 from evaluation.train_file import train
 from evaluation.validation_file import validation
 from evaluation.test_file import test
-import torch
-import torch.nn as nn
-import glob
-import os
-import numpy as np
-from PIL import Image
-from torchvision import transforms
-from prep_dataset import helpers
-from group_dataset_images import group_images
-import matplotlib.pyplot as plt
+
 
 if __name__ == '__main__':
 
@@ -89,24 +86,18 @@ if __name__ == '__main__':
                                                            height_range=(4, 32),
                                                            size_range=(4, 16))
 
-        fig,axs = plt.subplots(len(images), 2, figsize=(10,5))
+        fig, axs = plt.subplots(len(images), 2, figsize=(10,5))
 
         for i,image in enumerate(images):
             pix_image=image[0]
             target_array = image[2]
-            #tmp = pix_image.astype(dtype=np.uint8)
             tmp = pix_image.reshape(pix_image.shape[1],pix_image.shape[2])
             input_pil = Image.fromarray(tmp)
 
             input_tensor = preprocessing(pix_image).to(device)
-            #input_ = helpers.normalize_targets(input_tensor)
             input_ = torch.clone(input_tensor).to(device)
             input_ = input_.reshape(1,pix_image.shape[1],pix_image.shape[2])
             input_ = input_.to(dtype=torch.float64)
-
-            # input_ = torch.clone(input_tensor).to(device)
-            # input_ = input_.reshape(1, pix_image.shape[1], pix_image.shape[2])
-            # input_ = input_.to(dtype=torch.float64)
 
             with torch.no_grad():
                 output = cnn_model(input_)

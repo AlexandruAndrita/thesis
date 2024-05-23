@@ -1,7 +1,6 @@
 from group_dataset_images.stacking_method import stack_with_padding
 from group_dataset_images import group_images
 from torch.utils.data import DataLoader
-from torchvision import transforms
 
 
 def stack_as_collate(batch):
@@ -14,11 +13,12 @@ def stack_as_collate(batch):
 
     return stack_with_padding(batch, 128, 170)
 
+
 def get_images(input_directory):
     images = group_images.RandomImagePixelationDataset(input_directory,
-                                          width_range=(4, 32),
-                                          height_range=(4, 32),
-                                          size_range=(4, 16))
+                                              width_range=(4, 32),
+                                              height_range=(4, 32),
+                                              size_range=(4, 16))
 
     """
     up until this point, images should have the maximum height and width in each batch, they should be grayscale
@@ -36,19 +36,16 @@ def get_images(input_directory):
     test_set_length = int(len(images)*0.1)
     validation_set_length = int(len(images)*0.2)
 
-    # values for width, range and size should be modified with more helpful ones
     test_data = group_images.RandomImagePixelationDataset(input_directory,
                                              width_range=(4, 32),
                                              height_range=(4, 32),
                                              size_range=(4, 16))
 
-    # values for width, range and size should be modified with more helpful ones
     validation_data = group_images.RandomImagePixelationDataset(input_directory,
                                                                 width_range=(4, 32),
                                                                 height_range=(4, 32),
                                                                 size_range=(4,16))
 
-    # values for width, range and size should be modified with more helpful ones
     training_data = group_images.RandomImagePixelationDataset(input_directory,
                                                                width_range=(4, 32),
                                                                height_range=(4, 32),
@@ -69,6 +66,7 @@ def get_images(input_directory):
 
     return train_dataset,validation_dataset,test_dataset
 
+
 if __name__ == "__main__":
     input_directory_path = "D:\\an III\\bachelor's thesis\\thesis\dataset\\test_first_stage"
-    _,_,_ = get_images(input_directory_path)
+    _ ,_ ,_ = get_images(input_directory_path)
