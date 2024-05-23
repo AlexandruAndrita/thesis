@@ -18,6 +18,7 @@ def get_image_hash(file):
     # returning hexadecimal string representation
     return h.hexdigest()
 
+
 def check_image(file,root):
     if file.endswith('.jpeg') is False and file.endswith('.jpg') is False and file.endswith('.JPG') is False and file.endswith('.JPEG') is False:
         return 1
@@ -41,12 +42,14 @@ def check_image(file,root):
     except IOError:
         return 3
 
+
 def create_log_file(path):
     log_file_dirname=os.path.dirname(path)
 
     # parents = True - every missing directory is created
     # exist_ok = True - if file already exists, the error is ignored
     Path(log_file_dirname).mkdir(parents=True, exist_ok=True)
+
 
 # deleting all the files from a specific directory
 def delete_directory_content(directory_path):
@@ -61,7 +64,8 @@ def delete_directory_content(directory_path):
         # still, no problem bypassing the exception since the directory will be created later
         pass
 
-def validate_images(input_dir: str, output_dir: str, log_file: str, formatter: str="07d"):
+
+def validate_images(input_dir: str, output_dir: str, log_file: str, formatter: str = "07d"):
     input_dir=os.path.abspath(input_dir)
     absolute_paths=[]
 
@@ -117,13 +121,13 @@ def validate_images(input_dir: str, output_dir: str, log_file: str, formatter: s
         log_file_f.close()
         raise FileNotFoundError(f"The path '{input_dir}' does not exist")
 
-
     log_file_f.close()
 
     return valid_images
 
+
 def create_file_name(batch_name):
     folder_file_name = "test_batch_" + str(batch_name)
     log_file_name = "log_file_batch_" + str(batch_name) + ".txt"
-    return  folder_file_name,log_file_name
+    return folder_file_name,log_file_name
 

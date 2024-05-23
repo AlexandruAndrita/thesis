@@ -3,7 +3,6 @@ from prep_dataset.helpers import *
 from torchvision import transforms
 from PIL import Image
 import matplotlib.pyplot as plt
-import os
 
 
 def test(cnn_model, test_dataset, criterion, device):
@@ -20,7 +19,6 @@ def test(cnn_model, test_dataset, criterion, device):
                 target = batch[2][i]
                 path = batch[3][i]
             """
-            #for i, _ in enumerate(batch):
             pixelated_image = torch.from_numpy(batch[0])
             known_array = torch.from_numpy(batch[1])
             target_array = torch.from_numpy(batch[2])
@@ -37,13 +35,6 @@ def test(cnn_model, test_dataset, criterion, device):
             pixelated_image_normalized = normalize_targets(pixelated_image)
             pixelated_image_normalized = pixelated_image_normalized.reshape(1, pixelated_image_normalized.shape[2],pixelated_image_normalized.shape[3])
 
-            # saving the pixelated image locally
-            #pixelated_image_saved = transforms.ToPILImage()(pixelated_image_normalized)
-            #pixelated_image_saved.save(os.path.join(folder_path, f"pix_image{i}.jpg"))
-            # saving the target image locally
-            #target_array_saved = transforms.ToPILImage()(target_array_normalized)
-            #target_array_saved.save(os.path.join(folder_path, f"target_array{i}.jpg"))
-
             output = cnn_model(pixelated_image_normalized)
             output=output.reshape(1,output.shape[1],output.shape[2])
             # normalizing output of the model
@@ -56,13 +47,11 @@ def test(cnn_model, test_dataset, criterion, device):
             loss = criterion(crop_reshaped, target_array_normalized)
             total_loss += loss.item()
 
-            # Comparing the orginal picture with the one provided by the model
+            # Comparing the original picture with the one provided by the model
             pil_before_model = transforms.ToPILImage()(pixelated_image_normalized.cpu().detach())
             pixelated_image_normalized[~known_array] = crop
             pil_image_model = transforms.ToPILImage()(pixelated_image_normalized.cpu().detach())
             image_path = Image.open(image_path)
-            #pil_image_model.show()
-            #image_path.show()
 
             fig, axs = plt.subplots(1, 3, figsize=(10, 5))
 

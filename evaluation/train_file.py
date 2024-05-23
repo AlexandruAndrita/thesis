@@ -1,10 +1,8 @@
-import numpy as np
 import torch
 from prep_dataset.helpers import *
-import matplotlib.pyplot as plt
 from torchvision import transforms
-from PIL import Image
 import os
+import numpy as np
 
 
 def train(cnn_model, train_dataset, optimizer, criterion, device):
@@ -20,7 +18,6 @@ def train(cnn_model, train_dataset, optimizer, criterion, device):
             target = batch[2][i]
             path = batch[3][i]
         """
-        #for i,_ in enumerate(batch):
         pixelated_image = torch.from_numpy(batch[0])
         known_array = torch.from_numpy(batch[1])
         target_array = torch.from_numpy(batch[2])
@@ -50,11 +47,6 @@ def train(cnn_model, train_dataset, optimizer, criterion, device):
         # normalizing output of the model
         output_normalized = normalize_targets(output)
 
-        # print(f"Input shape: {pixelated_image.shape}")
-        # print(f"Boolean mask: {known_array.shape}")
-        # print(f"Target shape: {target_array_normalized.shape}")
-        # print(f"Output shape: {output.shape}")
-
         known_array = known_array.to(dtype=torch.bool)
         crop = output_normalized[~known_array]
         crop_reshaped = crop.reshape(target_array_normalized.shape)
@@ -69,26 +61,22 @@ def train(cnn_model, train_dataset, optimizer, criterion, device):
         loss.backward()  # compute gradients
         optimizer.step()  # weight update
 
-    print(f"Total loss train: {total_loss}")
-    print(f"Total loss train divided by length: {total_loss / len(train_dataset)}")
+    # print(f"Total loss train: {total_loss}")
+    # print(f"Total loss train divided by length: {total_loss / len(train_dataset)}")
 
     return total_loss / len(train_dataset)
 
+
 def replace_pixelated_area(pixelated_image,known_array,target_array):
+    start_row,start_col = float("inf"), float("inf")
+    end_row, end_col = 0, 0
+    N = pixelated_image.shape[0]
 
-    start_row,start_col=99999,99999
-    end_row, end_col=0,0
-    N=pixelated_image.shape[0]
+    tmp_known_array = np.array(known_array.tolist())
+    tmp_known_array = np.max(tmp_known_array, axis=0).squeeze()
 
-    tmp_known_array=np.array(known_array.tolist())
-    tmp_known_array=np.max(tmp_known_array,axis=0).squeeze()
-
-    #tmp_known_array=tmp_known_array.reshape(pixelated_image.shape[2],pixelated_image.shape[3])
-
-    tmp=np.array(pixelated_image.tolist())
-    tmp=np.max(tmp,axis=0).squeeze()
-
-    #tmp=tmp.reshape(pixelated_image.shape[2],pixelated_image.shape[3])
+    tmp = np.array(pixelated_image.tolist())
+    tmp = np.max(tmp, axis=0).squeeze()
 
     for row in range(pixelated_image.shape[2]):
         for col in range(pixelated_image.shape[3]):
@@ -98,12 +86,12 @@ def replace_pixelated_area(pixelated_image,known_array,target_array):
                 end_row=max(end_row,row)
                 end_col=max(end_col,col)
 
-    if start_col!=0 and start_row!=0 and end_col!=0 and end_row!=0:
-        tmp[start_row:end_row+1,start_col:end_col+1]=np.array(target_array[0].tolist())
+    if start_col != 0 and start_row != 0 and end_col != 0 and end_row != 0:
+        tmp[start_row:end_row+1, start_col:end_col+1] = np.array(target_array[0].tolist())
 
-    tmp=np.expand_dims(tmp,axis=0)
-    tmp=np.repeat(tmp,N,axis=0)
-    tmp=torch.tensor(tmp)
+    tmp = np.expand_dims(tmp, axis=0)
+    tmp = np.repeat(tmp, N, axis=0)
+    tmp = torch.tensor(tmp)
 
     return tmp
 
