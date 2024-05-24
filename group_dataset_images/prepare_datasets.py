@@ -16,9 +16,9 @@ def stack_as_collate(batch):
 
 def get_images(input_directory):
     images = group_images.RandomImagePixelationDataset(input_directory,
-                                              width_range=(4, 32),
-                                              height_range=(4, 32),
-                                              size_range=(4, 16))
+                                            width_range=(4, 32),
+                                            height_range=(4, 32),
+                                            size_range=(4, 16))
 
     """
     up until this point, images should have the maximum height and width in each batch, they should be grayscale
@@ -37,9 +37,9 @@ def get_images(input_directory):
     validation_set_length = int(len(images)*0.2)
 
     test_data = group_images.RandomImagePixelationDataset(input_directory,
-                                             width_range=(4, 32),
-                                             height_range=(4, 32),
-                                             size_range=(4, 16))
+                                            width_range=(4, 32),
+                                            height_range=(4, 32),
+                                            size_range=(4, 16))
 
     validation_data = group_images.RandomImagePixelationDataset(input_directory,
                                                                 width_range=(4, 32),
@@ -47,13 +47,13 @@ def get_images(input_directory):
                                                                 size_range=(4,16))
 
     training_data = group_images.RandomImagePixelationDataset(input_directory,
-                                                               width_range=(4, 32),
-                                                               height_range=(4, 32),
-                                                               size_range=(4,16))
+                                                            width_range=(4, 32),
+                                                            height_range=(4, 32),
+                                                            size_range=(4,16))
 
     test_data.filenames = [item[-1] for item in images_with_path[len(images)-test_set_length:len(images)]]
     validation_data.filenames = [item[-1] for item in images_with_path[len(images)-test_set_length-validation_set_length:
-                                                  len(images)-test_set_length]]
+                                                len(images)-test_set_length]]
     training_data.filenames = [item[-1] for item in images_with_path[:len(images)-test_set_length-validation_set_length]]
 
     # max_height = max(test_data.max_height, validation_data.max_height, training_data.max_height)

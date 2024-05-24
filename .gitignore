@@ -5,8 +5,7 @@ evaluation\__pycache__
 .idea
 package-lock.json
 package.json
-.venv
+.env/
+.venv/
 __pycache__
-.vscode/settings.json
-.vscode/launch.json
-
+.vscode/
