@@ -82,9 +82,9 @@ if __name__ == '__main__':
         ])
 
         images = group_images.RandomImagePixelationDataset(input_directory_path,
-                                                           width_range=(4, 32),
-                                                           height_range=(4, 32),
-                                                           size_range=(4, 16))
+                                                        width_range=(4, 32),
+                                                        height_range=(4, 32),
+                                                        size_range=(4, 16))
 
         fig, axs = plt.subplots(len(images), 2, figsize=(10,5))
 

@@ -4,8 +4,7 @@ import prep_dataset.helpers as mathematical_formulas
 
 def apply_formulas(array: np.ndarray):
     array=np.divide(array,255)
-    array=np.where(array<=0.04045,mathematical_formulas.less_equal_than(array),
-                   mathematical_formulas.greater_than(array))
+    array=np.where(array<=0.04045,mathematical_formulas.less_equal_than(array),mathematical_formulas.greater_than(array))
 
     r_linear=array[:,:,0]
     g_linear=array[:,:,1]
