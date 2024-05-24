@@ -11,7 +11,7 @@
             "request": "launch",
             "module": "flask",
             "env":{
-                "FLASK_APP": "startup:app",
+                "FLASK_APP": "app",
                 "FLASK_ENV": "development",
             },
             "args": [
