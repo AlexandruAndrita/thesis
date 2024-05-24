@@ -8,8 +8,16 @@
             "name": "Image Depixelation",
             "type": "python",
             "request": "launch",
-            "program": "app.py",
-            "console": "integratedTerminal"
+            "module": "flask",
+            "env":{
+                "FLASK_APP": "app.py",
+                "FLASK_ENV": "development",
+            },
+            "args": [
+                "run",
+                "--no-debugger"
+            ],
+            "jinja": true
         }
     ]
 }
