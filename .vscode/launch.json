@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Flask",
+            "name": "Image Depixelation",
             "type": "debugpy",
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "app.py",
-                "FLASK_DEBUG": "1"
+                "FLASK_APP": "app:app",
+                "FLASK_ENV": "development"
             },
             "args": [
                 "run",
