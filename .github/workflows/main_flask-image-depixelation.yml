@@ -66,4 +66,4 @@ jobs:
         with:
           app-name: 'flask-image-depixelation'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_484A33D54B894F61B67771EC895484B3 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_94EC79253C4B4F48BBEB6BA20E64ABF4 }}
