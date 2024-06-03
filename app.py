@@ -45,9 +45,6 @@ def save_image(image, filename):
     images_directory = os.path.join(os.getcwd(), 'processed_images')
     if not os.path.exists(images_directory):
         os.makedirs(images_directory)
-
-    # downloads_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
-
     image_path = os.path.join(images_directory, filename)
     with open(image_path, 'wb') as f:
         f.write(image)
