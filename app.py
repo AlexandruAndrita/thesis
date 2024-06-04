@@ -48,7 +48,6 @@ def save_image(image, filename):
     image_path = os.path.join(images_directory, filename)
     with open(image_path, 'wb') as f:
         f.write(image)
-
     return image_path
 
 
