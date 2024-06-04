@@ -4,7 +4,7 @@ import io
 import base64
 from io import BytesIO
 
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, send_file, make_response
 import pickle
 
 from PIL import Image
@@ -42,7 +42,7 @@ def prepare_image_for_interface(image):
 
 
 def save_image(image, filename):
-    images_directory = os.path.join(os.getcwd(), 'processed_images')
+    images_directory = os.path.join(os.getcwd(), 'savedImages')
     if not os.path.exists(images_directory):
         os.makedirs(images_directory)
     image_path = os.path.join(images_directory, filename)
@@ -187,7 +187,9 @@ def save_image_route():
     decoded_img = base64.b64decode(filename)
     saved_path = save_image(decoded_img, 'processed_image.jpg')
     flash(f'Image saved successfully. Discarding input','imageSaved')
-    return redirect('/')
+    response = make_response(send_file(saved_path, as_attachment=True))
+    response.set_cookie('fileDownload', 'true', max_age=60)
+    return response
 
 
 @app.route('/discard_images', methods=['POST'])
