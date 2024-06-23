@@ -16,13 +16,22 @@ from sklearn.random_projection import GaussianRandomProjection
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.pipeline import make_pipeline
 
-from evaluation.model_file import CNNModel
-from prep_dataset import to_grayscale
+from evaluation.model_file import CNNModel, CNNEncDecModel
+from prep_dataset import to_grayscale, helpers
 from evaluation.train_individual_model import find_model_output
 
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+# instantiating both models here since it makes no sense to instantiate them every time an image is processed
+simple_cnn_model = CNNModel()
+simple_cnn_model.load_state_dict(torch.load("CNNModel.pth"))
+simple_cnn_model.eval()
+
+cnn_enc_dec_model = CNNEncDecModel()
+cnn_enc_dec_model.load_state_dict(torch.load("CNNDecEndModel.pth"))
+cnn_enc_dec_model.eval()
 
 
 def allowed_file(filename):
@@ -77,6 +86,39 @@ def upload_file():
     return render_template('index.html')
 
 
+def model_prediction(grayscale_img, known_array, max_value, min_value, option):
+    grayscale_img_tensor = torch.tensor([])
+    if option == "simple":
+        grayscale_img_tensor = torch.tensor(grayscale_img.copy(), dtype=torch.float32).unsqueeze(0)
+    elif option == "enc-dec":
+        grayscale_img_tensor = torch.tensor(grayscale_img.copy(), dtype=torch.float32).unsqueeze(0).unsqueeze(0)
+
+    grayscale_img_tensor_normalized = helpers.apply_normalization(grayscale_img_tensor,max_value,min_value)
+
+    with torch.no_grad():
+        if option == "simple":
+            output = simple_cnn_model(grayscale_img_tensor_normalized)
+        elif option == "enc-dec":
+            output = cnn_enc_dec_model(grayscale_img_tensor_normalized)
+
+    if option == "simple":
+        grayscale_img_tensor_normalized = grayscale_img_tensor_normalized.squeeze(0)
+        output = output.squeeze(0)
+    elif option == "enc-dec":
+        grayscale_img_tensor_normalized = grayscale_img_tensor_normalized.squeeze(0).squeeze(0)
+        output = output.squeeze(0).squeeze(0)
+
+    grayscale_img_tensor_normalized = helpers.denormalize(grayscale_img_tensor_normalized, max_value, min_value)
+    output = helpers.denormalize(output, max_value, min_value)
+
+    output = output.cpu().detach().numpy()
+    grayscale_img_tensor_normalized = grayscale_img_tensor_normalized.cpu().detach().numpy()
+
+    grayscale_img_tensor_normalized[known_array == 0] = output[known_array == 0]
+
+    # (output with mask, whole model output)
+    return grayscale_img_tensor_normalized, output
+
 @app.route('/process', methods=['POST'])
 def process_image():
     filename = request.form['filename']
@@ -99,30 +141,32 @@ def process_image():
 
     processed_filenames = list()
     if grayscale_img.shape[0] in [128,170] and grayscale_img.shape[1] in [128,170] and grayscale_img.shape[0]!=grayscale_img.shape[1]:
-        model = CNNModel()
-        model.load_state_dict(torch.load("CNNModel.pth"))
-        model.eval()
-        grayscale_img_tensor=torch.tensor(grayscale_img.copy(), dtype=torch.float32).unsqueeze(0)
-        grayscale_img_tensor=torch.div(grayscale_img_tensor,255.0)
+        max_value = grayscale_img.max().item()
+        min_value = grayscale_img.min().item()
 
-        with torch.no_grad():
-            output = model(grayscale_img_tensor)
+        # Simple CNN Architecture
+        output_with_mask, whole_output_model = model_prediction(
+            grayscale_img=grayscale_img,
+            known_array=known_array,
+            max_value=max_value,
+            min_value=min_value,
+            option="simple"
+        )
 
-        grayscale_img_tensor=grayscale_img_tensor.squeeze(0)
-        output = output.squeeze(0)
+        processed_filenames.append(prepare_image_for_interface(output_with_mask)) # output using the boolean mask
+        processed_filenames.append(prepare_image_for_interface(whole_output_model)) # whole output from model
 
-        grayscale_img_tensor = torch.mul(grayscale_img_tensor, 255.0)
-        output = torch.mul(output,255.0)
+        # Encoder-Decoder CNN Architecture
+        output_with_mask, whole_output_model = model_prediction(
+            grayscale_img=grayscale_img,
+            known_array=known_array,
+            max_value=max_value,
+            min_value=min_value,
+            option="enc-dec"
+        )
 
-        output = output.cpu().detach().numpy()
-        grayscale_img_tensor = grayscale_img_tensor.cpu().detach().numpy()
-
-        grayscale_img_tensor[known_array==0]=output[known_array==0]
-
-        grayscale_img_tensor=grayscale_img_tensor.reshape(grayscale_img.shape[0],grayscale_img.shape[1])
-        known_array = known_array.reshape(grayscale_img.shape[0],grayscale_img.shape[1])
-        processed_filenames.append(prepare_image_for_interface(grayscale_img_tensor)) # output using the boolean mask
-        processed_filenames.append(prepare_image_for_interface(output)) # whole output from model
+        processed_filenames.append(prepare_image_for_interface(output_with_mask)) # output using the boolean mask
+        processed_filenames.append(prepare_image_for_interface(whole_output_model)) # whole output from model
 
     final_knn20neighbors = find_model_output(
         regressor=KNeighborsRegressor(n_neighbors=20, metric='canberra'),
@@ -203,5 +247,4 @@ def discard_input_image():
 
 if __name__ == '__main__':
     app.run()
-
 

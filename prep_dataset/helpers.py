@@ -6,25 +6,26 @@ def less_equal_than(pixel_value):
 
 
 def greater_than(pixel_value):
-    tmp=(pixel_value+0.055)/1.055
-    tmp=tmp**2.4
+    tmp = (pixel_value+0.055)/1.055
+    tmp = tmp**2.4
     return tmp
 
 
-def get_y_linear(r_linear,g_linear,b_linear,red_coef,green_coef,blue_coef):
-    y_linear=r_linear*red_coef+g_linear*green_coef+b_linear*blue_coef
+def get_y_linear(r_linear, g_linear, b_linear, red_coef, green_coef, blue_coef):
+    y_linear = r_linear*red_coef+g_linear*green_coef+b_linear*blue_coef
     return y_linear
 
 
 def normalize_output(y):
-    # normalizing with values between 0 and 1 [0,1]
-    y=(y-np.min(y))/(np.max(y)-np.min(y))
+    y = (y-np.min(y))/(np.max(y)-np.min(y))
     return y
 
 
-def normalize_targets(tensor_target):
-    min_value = tensor_target.min()
-    max_value = tensor_target.max()
+def apply_normalization(tensor_target, max_value, min_value):
     tensor_tmp = (tensor_target-min_value)/(max_value-min_value)
+    return tensor_tmp
 
+
+def denormalize(tensor_target,max_value,min_value):
+    tensor_tmp = tensor_target*(max_value-min_value)+min_value
     return tensor_tmp
