@@ -72,9 +72,9 @@ class CNNEncDecModel(nn.Module):
         d2 = self.concatenate(d2, e2)
         d2 = self.decoder2(d2)  # (N, 128, 64, 85)
 
-        d1 = self.upconv1(d2)  # (N, 64, 128, 168)
+        d1 = self.upconv1(d2)  # (N, 64, 128, 170)
         d1 = self.concatenate(d1, e1)
-        d1 = self.decoder1(d1)  # (N, 64, 128, 168)
+        d1 = self.decoder1(d1)  # (N, 64, 128, 170)
 
         output_layer = self.final_conv(d1)
         return output_layer
