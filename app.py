@@ -26,11 +26,21 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 # instantiating both models here since it makes no sense to instantiate them every time an image is processed
 simple_cnn_model = CNNModel()
-simple_cnn_model.load_state_dict(torch.load("CNNModel.pth"))
+try:
+    simple_cnn_model.load_state_dict(torch.load("CNNModel.pth"))
+except FileNotFoundError:
+    raise FileNotFoundError("CNNModel.pth is not found.")
+except RuntimeError:
+    raise RuntimeError("CNNModel.pth does not have the right configuration")
 simple_cnn_model.eval()
 
 cnn_enc_dec_model = CNNEncDecModel()
-cnn_enc_dec_model.load_state_dict(torch.load("CNNDecEndModel.pth"))
+try:
+    cnn_enc_dec_model.load_state_dict(torch.load("CNNDecEndModel.pth"))
+except FileNotFoundError:
+    raise FileNotFoundError("CNNDecEndModel.pth is not found.")
+except RuntimeError:
+    raise RuntimeError("CNNDecEndModel.pth does not have the right configuration")
 cnn_enc_dec_model.eval()
 
 
@@ -170,8 +180,8 @@ def process_image():
 
     final_knn20neighbors = find_model_output(
         regressor=KNeighborsRegressor(n_neighbors=20, metric='canberra'),
-        known_array = known_array,
-        image = grayscale_img
+        known_array=known_array,
+        image=grayscale_img
     )
 
     final_knn25neighbors = find_model_output(
@@ -179,12 +189,6 @@ def process_image():
         known_array=known_array,
         image=grayscale_img
     )
-
-    # final_knn2 = find_model_output(
-    #     regressor=KNeighborsRegressor(n_neighbors=2),
-    #     known_array=known_array,
-    #     image=grayscale_img
-    # )
 
     final_randomforest = find_model_output(
         regressor=RandomForestRegressor(n_estimators=100),
@@ -198,13 +202,6 @@ def process_image():
         image=grayscale_img
     )
 
-    # base = make_pipeline(GaussianRandomProjection(n_components=15),DecisionTreeRegressor(max_depth=20, max_features=15))
-    # final_adaboost001 = find_model_output(
-    #     regressor=AdaBoostRegressor(base, n_estimators=100, learning_rate=0.001),
-    #     known_array=known_array,
-    #     image=grayscale_img
-    # )
-
     base = make_pipeline(GaussianRandomProjection(n_components=10),DecisionTreeRegressor(max_depth=10, max_features=5))
     final_adaboost01 = find_model_output(
         regressor=AdaBoostRegressor(base, n_estimators=50, learning_rate=0.01),
@@ -214,10 +211,8 @@ def process_image():
 
     processed_filenames.append(prepare_image_for_interface(final_knn20neighbors))
     processed_filenames.append(prepare_image_for_interface(final_knn25neighbors))
-    # processed_filenames.append(prepare_image_for_interface(final_knn2))
     processed_filenames.append(prepare_image_for_interface(final_randomforest))
     processed_filenames.append(prepare_image_for_interface(final_decisiontressdepth40leaf7))
-    # processed_filenames.append(prepare_image_for_interface(final_adaboost001))
     processed_filenames.append(prepare_image_for_interface(final_adaboost01))
 
     return render_template('index.html', filename=filename, processed_filenames=processed_filenames)
