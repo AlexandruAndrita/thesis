@@ -150,10 +150,10 @@ def process_image():
         return redirect('/')
 
     processed_filenames = list()
-    if grayscale_img.shape[0] in [128,170] and grayscale_img.shape[1] in [128,170] and grayscale_img.shape[0]!=grayscale_img.shape[1]:
-        max_value = grayscale_img.max().item()
-        min_value = grayscale_img.min().item()
+    max_value = grayscale_img.max().item()
+    min_value = grayscale_img.min().item()
 
+    if grayscale_img.shape[0] in [128,170] and grayscale_img.shape[1] in [128,170] and grayscale_img.shape[0] != grayscale_img.shape[1]:
         # Simple CNN Architecture
         output_with_mask, whole_output_model = model_prediction(
             grayscale_img=grayscale_img,
@@ -166,6 +166,7 @@ def process_image():
         processed_filenames.append(prepare_image_for_interface(output_with_mask)) # output using the boolean mask
         processed_filenames.append(prepare_image_for_interface(whole_output_model)) # whole output from model
 
+    if grayscale_img.shape[0] == 128 and grayscale_img.shape[1] == 170 and grayscale_img.shape[0] != grayscale_img.shape[1]:
         # Encoder-Decoder CNN Architecture
         output_with_mask, whole_output_model = model_prediction(
             grayscale_img=grayscale_img,
